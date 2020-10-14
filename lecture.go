@@ -3,15 +3,16 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"strconv"
 	"strings"
 )
 
-type nd struct {
-	nom string
-}
+//type nd struct {
+//	nom string
+//}
 
 type Lien struct {
 	dep   string
@@ -20,13 +21,15 @@ type Lien struct {
 	id    int
 }
 
-func getGraph() {
-
+func getGraph(graph map[string][]Lien) {
+	for i := range graph {
+		fmt.Println(graph[i])
+	}
 }
 
-var maMap map[string]Lien
-
-func main() {
+func makeGraph() map[string][]Lien {
+	graph := make(map[string][]Lien)
+	idl := 0
 	f, err := os.Open("graph.txt")
 	defer f.Close()
 	if err != nil {
@@ -38,6 +41,9 @@ func main() {
 	for {
 
 		line, err := rd.ReadString('\n')
+		if err == io.EOF {
+			break
+		}
 
 		if err != nil {
 			log.Fatal(err)
@@ -45,16 +51,28 @@ func main() {
 		tsep := strings.Split(line, ";")
 		res1 := tsep[0]
 		res2 := tsep[1]
-		res3 := tsep[2]
-		resq := strings.TrimSuffix(tsep[3], "\r\n")
-		res4, err := strconv.Atoi(resq)
+		resq := strings.TrimSuffix(tsep[2], "\r\n")
+		res3, err := strconv.Atoi(resq)
 		if err == nil {
-			//fmt.Println(res4)
+			//fmt.Println(res3)
 		}
-		fmt.Println("Depart:", res1, "|", "Fin:", res2, "|", "ID: ", res3, "|", "Distance:", res4)
+
+		lien := Lien{res1, res2, res3, idl}
+		idl += 1
+		graph[res1] = append(graph[res1], lien)
+
+		//fmt.Println("Depart:", res1, "|", "Fin:", res2, "|", "ID: ", res3, "|", "Distance:")
 	}
-	if err != nil {
-		fmt.Printf("DEBUG ERROR TYPE %d", err)
-	}
+	return graph
+
+}
+
+
+func main() {
+	getGraph(makeGraph())
+
+
+
+
 
 }
