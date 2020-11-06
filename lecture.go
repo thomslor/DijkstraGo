@@ -81,13 +81,6 @@ func ListeNd(graph map[*Nd][]Lien) []*Nd {
 	return keys
 }
 
-//fonction qui donne la liste des liens/voisins a partir d'un noeud donné
-func ListeVoisins(graph map[*Nd][]Lien, nd *Nd) []*Lien {
-	listeVoisins := make([]*Lien)
-
-	return listeVoisins
-}
-
 //fonction qui créé le tableau initial de distances à partir du graphe en entrée
 //le noeud source se voit attribuer la valeur 0 et tous les autres noeuds la valeur infinie
 func NewDistTab(NdInit *Nd) map[*Nd]int {
@@ -150,7 +143,7 @@ func Dijkstra(initNd *Nd) (plusCourtChemin string) {
 		visiteOK = append(visiteOK, nd)
 
 		//On prend les voisins du noeud visite (liste de liens)
-		voisins := ListeVoisins(graph, nd) //trouver comment get les liens dans le map
+		voisins := graph[nd]
 
 		//On calcule les nouvelles distances et met a jour le distTab
 		for _, lien := range voisins {
