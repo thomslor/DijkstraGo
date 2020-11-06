@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -94,6 +95,36 @@ func NewDistTab(NdInit *Nd) map[*Nd]int {
 
 	return DistTab
 }
+
+//fonction qui donne le noeud non visité avec la plus petite distance
+func getBestNonVisitedNode(distTab map[*Nd]int, visited []*Nd) *Nd {
+	type DistTabATrier struct {
+		Nd       *Nd
+		Distance int
+	}
+	var triOK []DistTabATrier
+	//Pour voir si le noeud a deja ete visite
+	for nd, distance := range distTab {
+		var visiteOK bool
+		for _, ndVisiteOK := range visited {
+			if nd == ndVisiteOK {
+				visiteOK = true
+			}
+		}
+		//Si le noeud n'a pas ete visite, on l'ajoute au slice triOK
+		if !visiteOK {
+			triOK = append(triOK, DistTabATrier{nd, distance})
+		}
+	}
+	//Pour avoir la plus petite distance il faut trier le slice triOK et prendre la première valeur
+	sort.Slice(triOK, func(i, j int) bool {
+		return triOK[i].Distance < triOK[j].Distance
+	})
+
+	return triOK[0].Nd
+}
+
+//ALGORITHME DE DIJKSTRA
 
 func main() {
 	getGraph(makeGraph())
