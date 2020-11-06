@@ -8,7 +8,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"sort"
 )
 
 type Nd struct {
@@ -21,7 +20,7 @@ type Lien struct {
 	poids int
 }
 
-graph := makeGraph()
+var graph map[*Nd][]Lien = makeGraph()
 
 const Infinity = int(^uint(0) >> 1)
 
@@ -71,9 +70,10 @@ func makeGraph() map[*Nd][]Lien {
 	return graph
 
 }
+
 //fonction qui nous donne la liste des noeuds du graphe en entrée
-func ListeNd(graph map[*Nd][]Lien) []Nd {
-	keys := make([]Nd, 0, len(graph))
+func ListeNd(graph map[*Nd][]Lien) []*Nd {
+	keys := make([]*Nd, 0, len(graph))
 	for k := range graph {
 		keys = append(keys, k)
 	}
