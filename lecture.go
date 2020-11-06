@@ -16,25 +16,25 @@ type Nd struct {
 }
 
 type Lien struct {
-	dep   *Nd
-	fin   *Nd
+	dep   Nd
+	fin   Nd
 	poids int
 }
 
-var graph map[*Nd][]Lien = makeGraph()
+var graph map[Nd][]Lien = makeGraph()
 
 const Infinity = int(^uint(0) >> 1)
 
 //fonction qui permet d'afficher le graphe en entrée
-func getGraph(graph map[*Nd][]Lien) {
+func getGraph(graph map[Nd][]Lien) {
 	for i := range graph {
 		fmt.Println(graph[i])
 	}
 }
 
 //fonction qui permet de créer un graphe avec un fichier .txt
-func makeGraph() map[*Nd][]Lien {
-	graph := make(map[*Nd][]Lien)
+func makeGraph() map[Nd][]Lien {
+	graph := make(map[Nd][]Lien)
 	f, err := os.Open("graph.txt")
 	defer f.Close()
 	if err != nil {
@@ -54,8 +54,8 @@ func makeGraph() map[*Nd][]Lien {
 			log.Fatal(err)
 		}
 		tsep := strings.Split(line, ";")
-		res1 := &Nd{nom: tsep[0]} //pb ici de conversion en string
-		res2 := &Nd{nom: tsep[1]} //pb ici de conversion en string
+		res1 := Nd{nom: tsep[0]} //pb ici de conversion en string
+		res2 := Nd{nom: tsep[1]} //pb ici de conversion en string
 		resq := strings.TrimSuffix(tsep[2], "\r\n")
 		res3, err := strconv.Atoi(resq)
 		if err == nil {
@@ -73,8 +73,8 @@ func makeGraph() map[*Nd][]Lien {
 }
 
 //fonction qui nous donne la liste des noeuds du graphe en entrée
-func ListeNd(graph map[*Nd][]Lien) []*Nd {
-	keys := make([]*Nd, 0, len(graph))
+func ListeNd(graph map[Nd][]Lien) []Nd {
+	keys := make([]Nd, 0, len(graph))
 	for k := range graph {
 		keys = append(keys, k)
 	}
@@ -83,8 +83,8 @@ func ListeNd(graph map[*Nd][]Lien) []*Nd {
 
 //fonction qui créé le tableau initial de distances à partir du graphe en entrée
 //le noeud source se voit attribuer la valeur 0 et tous les autres noeuds la valeur infinie
-func NewDistTab(NdInit *Nd) map[*Nd]int {
-	DistTab := make(map[*Nd]int)
+func NewDistTab(NdInit Nd) map[Nd]int {
+	DistTab := make(map[Nd]int)
 	DistTab[NdInit] = 0
 
 	for _, nd := range ListeNd(graph) {
@@ -97,9 +97,9 @@ func NewDistTab(NdInit *Nd) map[*Nd]int {
 }
 
 //fonction qui donne le noeud non visité avec la plus petite distance
-func getBestNonVisitedNode(distTab map[*Nd]int, visited []*Nd) *Nd {
+func getBestNonVisitedNode(distTab map[Nd]int, visited []Nd) Nd {
 	type DistTabATrier struct {
-		Nd       *Nd
+		Node     Nd
 		Distance int
 	}
 	var triOK []DistTabATrier
@@ -121,17 +121,17 @@ func getBestNonVisitedNode(distTab map[*Nd]int, visited []*Nd) *Nd {
 		return triOK[i].Distance < triOK[j].Distance
 	})
 
-	return triOK[0].Nd
+	return triOK[0].Node
 }
 
 //ALGORITHME DE DIJKSTRA : la fonction renvoie le chemin le plus court du noeud source a tous les autres noeuds
-func Dijkstra(initNd *Nd) (plusCourtChemin string) {
+func Dijkstra(initNd Nd) (plusCourtChemin string) {
 
 	//Creation du tableau de distances
 	distTab := NewDistTab(initNd)
 
 	//Creation d'une liste vide des noeuds visites. Des qu'un noeud est visite, il est ajoute a la liste
-	var visiteOK []*Nd
+	var visiteOK []Nd
 
 	//Creation d'une boucle pour visiter tous les noeuds
 	for len(visiteOK) != len(ListeNd(graph)) {
