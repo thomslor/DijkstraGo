@@ -8,6 +8,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sort"
 )
 
 type Nd struct {
@@ -24,12 +25,14 @@ graph := makeGraph()
 
 const Infinity = int(^uint(0) >> 1)
 
+//fonction qui permet d'afficher le graphe en entrée
 func getGraph(graph map[*Nd][]Lien) {
 	for i := range graph {
 		fmt.Println(graph[i])
 	}
 }
 
+//fonction qui permet de créer un graphe avec un fichier .txt
 func makeGraph() map[*Nd][]Lien {
 	graph := make(map[*Nd][]Lien)
 	f, err := os.Open("graph.txt")
@@ -51,8 +54,8 @@ func makeGraph() map[*Nd][]Lien {
 			log.Fatal(err)
 		}
 		tsep := strings.Split(line, ";")
-		res1 := &Nd{nom: tsep[0]}
-		res2 := &Nd{nom: tsep[1]}
+		res1 := &Nd{nom: tsep[0]} //pb ici de conversion en string
+		res2 := &Nd{nom: tsep[1]} //pb ici de conversion en string
 		resq := strings.TrimSuffix(tsep[2], "\r\n")
 		res3, err := strconv.Atoi(resq)
 		if err == nil {
@@ -68,14 +71,17 @@ func makeGraph() map[*Nd][]Lien {
 	return graph
 
 }
-
+//fonction qui nous donne la liste des noeuds du graphe en entrée
 func ListeNd(graph map[*Nd][]Lien) []Nd {
 	keys := make([]Nd, 0, len(graph))
 	for k := range graph {
 		keys = append(keys, k)
 	}
+	return keys
 }
 
+//fonction qui créé le tableau initial de distances à partir du graphe en entrée
+//le noeud source se voit attribuer la valeur 0 et tous les autres noeuds la valeur infinie
 func NewDistTab(NdInit *Nd) map[*Nd]int {
 	DistTab := make(map[*Nd]int)
 	DistTab[NdInit] = 0
