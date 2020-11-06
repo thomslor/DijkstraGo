@@ -81,6 +81,13 @@ func ListeNd(graph map[*Nd][]Lien) []*Nd {
 	return keys
 }
 
+//fonction qui donne la liste des liens/voisins a partir d'un noeud donné
+func ListeVoisins(graph map[*Nd][]Lien, nd *Nd) []*Lien {
+	listeVoisins := make([]*Lien)
+
+	return listeVoisins
+}
+
 //fonction qui créé le tableau initial de distances à partir du graphe en entrée
 //le noeud source se voit attribuer la valeur 0 et tous les autres noeuds la valeur infinie
 func NewDistTab(NdInit *Nd) map[*Nd]int {
@@ -124,7 +131,43 @@ func getBestNonVisitedNode(distTab map[*Nd]int, visited []*Nd) *Nd {
 	return triOK[0].Nd
 }
 
-//ALGORITHME DE DIJKSTRA
+//ALGORITHME DE DIJKSTRA : la fonction renvoie le chemin le plus court du noeud source a tous les autres noeuds
+func Dijkstra(initNd *Nd) (plusCourtChemin string) {
+
+	//Creation du tableau de distances
+	distTab := NewDistTab(initNd)
+
+	//Creation d'une liste vide des noeuds visites. Des qu'un noeud est visite, il est ajoute a la liste
+	var visiteOK []*Nd
+
+	//Creation d'une boucle pour visiter tous les noeuds
+	for len(visiteOK) != len(ListeNd(graph)) {
+
+		//On prend le noeud non visité le plus proche a partir de distTab
+		nd := getBestNonVisitedNode(distTab, visiteOK)
+
+		//On marque le noeud comme etant visite
+		visiteOK = append(visiteOK, nd)
+
+		//On prend les voisins du noeud visite (liste de liens)
+		voisins := ListeVoisins(graph, nd) //trouver comment get les liens dans le map
+
+		//On calcule les nouvelles distances et met a jour le distTab
+		for _, lien := range voisins {
+			distanceVoisin := distTab[nd] + lien.poids
+			//si distanceVoisin plus petite que la distance dans le distTab pour ce voisin
+			if distanceVoisin < distTab[lien.fin] {
+				//On met a jour la distTab pour ce voisin
+				distTab[lien.fin] = distanceVoisin
+			}
+		}
+	}
+	//affichage de distTab
+	for nd, distance := range distTab {
+		plusCourtChemin += fmt.Sprintf("La distance de %s à %s est %d/n", initNd, nd.nom, distance)
+	}
+	return plusCourtChemin
+}
 
 func main() {
 	getGraph(makeGraph())
