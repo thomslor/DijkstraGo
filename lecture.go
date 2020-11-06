@@ -54,8 +54,8 @@ func makeGraph() map[Nd][]Lien {
 			log.Fatal(err)
 		}
 		tsep := strings.Split(line, ";")
-		res1 := Nd{nom: tsep[0]} //pb ici de conversion en string
-		res2 := Nd{nom: tsep[1]} //pb ici de conversion en string
+		res1 := Nd{nom: tsep[0]}
+		res2 := Nd{nom: tsep[1]}
 		resq := strings.TrimSuffix(tsep[2], "\r\n")
 		res3, err := strconv.Atoi(resq)
 		if err == nil {
