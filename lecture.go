@@ -21,6 +21,12 @@ type Lien struct {
 	poids int
 }
 
+type GraphSommet struct {
+	Job bool
+	idGraph int
+	Sommet Nd
+}
+
 var graph map[Nd][]Lien = makeGraph()
 
 const Infinity = int(^uint(0) >> 1)
@@ -125,7 +131,7 @@ func getBestNonVisitedNode(distTab map[Nd]int, visited []Nd) Nd {
 }
 
 //ALGORITHME DE DIJKSTRA : la fonction renvoie le chemin le plus court du noeud source a tous les autres noeuds
-func Dijkstra(initNd Nd) (plusCourtChemin string) {
+func Djikstra(initNd Nd) (plusCourtChemin string) {
 
 	//Creation du tableau de distances
 	distTab := NewDistTab(initNd)
@@ -162,7 +168,34 @@ func Dijkstra(initNd Nd) (plusCourtChemin string) {
 	return plusCourtChemin
 }
 
+func worker(id int, work chan GraphSommet, results chan string){
+	for f := range work {
+		if f.Job {
+			results <- Djikstra(f.Sommet)
+		}
+	}
+}
+
 func main() {
 	getGraph(makeGraph())
+
+	nbSommets := len(ListeNd(graph))
+
+
+	jobs := make(chan GraphSommet, nbSommets)
+	results := make(chan string, nbSommets)
+
+	for i := 1; i <= 4; i++{
+		go worker(i, jobs, results)
+	}
+
+	for j := 1; j <= nbSommets; j++ {
+		jobs <- //Insérer GraphSommet
+	}
+	close(jobs)
+
+	for a :=1; a < nbSommets; a++ {
+		<-results
+	}
 
 }
