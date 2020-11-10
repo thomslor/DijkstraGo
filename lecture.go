@@ -180,6 +180,13 @@ func main() {
 	getGraph(makeGraph())
 
 	nbSommets := len(ListeNd(graph))
+	listSommet := ListeNd(graph)
+	listGraphSommet := make([]GraphSommet, 0, nbSommets)
+
+	for sommet := range ListeNd(graph){
+		f := GraphSommet{true, 1, listSommet[sommet]}
+		listGraphSommet = append(listGraphSommet, f)
+	}
 
 
 	jobs := make(chan GraphSommet, nbSommets)
@@ -190,7 +197,7 @@ func main() {
 	}
 
 	for j := 1; j <= nbSommets; j++ {
-		jobs <- //Insérer GraphSommet
+		jobs <- listGraphSommet[j]
 	}
 	close(jobs)
 
