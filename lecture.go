@@ -163,7 +163,7 @@ func Djikstra(initNd Nd) (plusCourtChemin string) {
 	}
 	//affichage de distTab
 	for nd, distance := range distTab {
-		plusCourtChemin += fmt.Sprintf("La distance de %s à %s est %d/n", initNd, nd.nom, distance)
+		plusCourtChemin += fmt.Sprintf("La distance de %s à %s est %d \n", initNd, nd.nom, distance)
 	}
 	return plusCourtChemin
 }
@@ -171,6 +171,9 @@ func Djikstra(initNd Nd) (plusCourtChemin string) {
 func worker(id int, work chan GraphSommet, results chan string){
 	for f := range work {
 		if f.Job {
+			fmt.Printf("Go routine %d réalise un Djikstra pour le sommet %s \n", id, f.Sommet.nom)
+			fmt.Println(Djikstra(f.Sommet))
+			fmt.Printf("Go routine %d a fini le Djikstra pour le sommet %s \n", id, f.Sommet.nom)
 			results <- Djikstra(f.Sommet)
 		}
 	}
@@ -196,12 +199,12 @@ func main() {
 		go worker(i, jobs, results)
 	}
 
-	for j := 1; j <= nbSommets; j++ {
+	for j := 0; j < nbSommets; j++ {
 		jobs <- listGraphSommet[j]
 	}
 	close(jobs)
 
-	for a :=1; a < nbSommets; a++ {
+	for a :=0; a < nbSommets; a++ {
 		<-results
 	}
 
