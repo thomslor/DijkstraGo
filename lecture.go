@@ -94,10 +94,10 @@ func NewDistTab(NdInit Nd) map[Nd]int {
 	DistTab := make(map[Nd]int)
 	DistTab[NdInit] = 0
 
-	for _, lien := range graph[NdInit] {
-		nd := lien.fin
-		DistTab[nd] = Infinity
-
+	for _, nd := range ListeNd(graph) {
+		if nd != NdInit {
+			DistTab[nd] = Infinity
+		}
 	}
 
 	return DistTab
@@ -111,8 +111,8 @@ func getBestNonVisitedNode(distTab map[Nd]int, visited []Nd) (Nd) {
 	}
 	var triOK []DistTabATrier
 	//Pour voir si le noeud a deja ete visite
-	var visiteOK bool
 	for nd, distance := range distTab {
+		var visiteOK bool
 		for _, ndVisiteOK := range visited {
 			if nd == ndVisiteOK {
 				visiteOK = true
@@ -128,7 +128,7 @@ func getBestNonVisitedNode(distTab map[Nd]int, visited []Nd) (Nd) {
 		return triOK[i].Distance < triOK[j].Distance
 	})
 
-	return triOK[0].Node
+	return triOK[0].Node //, triOK[0].Distance
 }
 
 //Recuperer distance entre 2 noeuds a partir graph
@@ -150,7 +150,6 @@ func Djikstra(initNd Nd) (plusCourtChemin string) {
 
 	//Creation d'une liste vide des noeuds visites. Des qu'un noeud est visite, il est ajoute a la liste
 	var visiteOK []Nd
-
 
 
 	//Creation d'une boucle pour visiter tous les noeuds
@@ -175,12 +174,13 @@ func Djikstra(initNd Nd) (plusCourtChemin string) {
 				distTab[lien.fin] = distanceVoisin
 			}
 		}
+		
 	}
-	plusCourtChemin = fmt.Sprintf("%s -> %s : %d \n", initNd, visiteOK[0], GetDistance(initNd, visiteOK[0]))
-	for i := 0; i < len(visiteOK)-1; i++ {
-		plusCourtChemin += fmt.Sprintf("%s -> %s : %d \n", visiteOK[i], visiteOK[i+1], GetDistance(visiteOK[i], visiteOK[i+1]))
+	for nd, distance := range distTab {
+		plusCourtChemin += fmt.Sprintf("La distance de %s à %s est %d \n", initNd, nd.nom, distance)
 	}
 	return plusCourtChemin
+
 }
 
 func worker(id int, work chan GraphSommet, results chan string){
