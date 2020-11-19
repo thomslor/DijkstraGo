@@ -128,7 +128,7 @@ func getBestNonVisitedNode(distTab map[Nd]int, visited []Nd) (Nd) {
 		return triOK[i].Distance < triOK[j].Distance
 	})
 
-	return triOK[0].Node //, triOK[0].Distance
+	return triOK[0].Node
 }
 
 //Recuperer distance entre 2 noeuds a partir graph
@@ -144,9 +144,11 @@ func GetDistance(dep Nd, fin Nd) (distance int){
 //ALGORITHME DE DIJKSTRA : la fonction renvoie le chemin le plus court du noeud source a tous les autres noeuds
 func Djikstra(initNd Nd) (plusCourtChemin string) {
 
+
 	//Creation du tableau de distances
 	distTab := NewDistTab(initNd)
 	//fmt.Println(distTab)
+	ResTab := make(map[Nd]Lien)
 
 	//Creation d'une liste vide des noeuds visites. Des qu'un noeud est visite, il est ajoute a la liste
 	var visiteOK []Nd
@@ -162,6 +164,7 @@ func Djikstra(initNd Nd) (plusCourtChemin string) {
 		visiteOK = append(visiteOK, nd)
 
 
+
 		//On prend les voisins du noeud visite (liste de liens)
 		voisins := graph[nd]
 
@@ -172,13 +175,19 @@ func Djikstra(initNd Nd) (plusCourtChemin string) {
 			if distanceVoisin < distTab[lien.fin] {
 				//On met a jour la distTab pour ce voisin
 				distTab[lien.fin] = distanceVoisin
+				ResTab[lien.fin] = lien
+
 			}
 		}
-		
+
 	}
-	for nd, distance := range distTab {
-		plusCourtChemin += fmt.Sprintf("La distance de %s à %s est %d \n", initNd, nd.nom, distance)
-	}
+	//for nd, distance := range distTab {
+		//plusCourtChemin += fmt.Sprintf("La distance de %s à %s est %d \n", initNd, nd.nom, distance)
+	//}
+	for dest, lien := range ResTab {
+		plusCourtChemin += fmt.Sprintf("%s --> %s, %d \n", lien.dep, dest, lien.poids)
+		}
+
 	return plusCourtChemin
 
 }
@@ -190,6 +199,7 @@ func worker(id int, work chan GraphSommet, results chan string){
 			fmt.Println(Djikstra(f.Sommet))
 			fmt.Printf("Go routine %d a fini le Djikstra pour le sommet %s \n", id, f.Sommet.nom)
 			results <- Djikstra(f.Sommet)
+
 		}
 	}
 }
@@ -198,30 +208,37 @@ func main() {
 	getGraph(makeGraph())
 
 	nbSommets := len(ListeNd(graph))
-	//fmt.Println(len(graph))
 	listSommet := ListeNd(graph)
 	listGraphSommet := make([]GraphSommet, 0, nbSommets)
 
+
+	//remplit GraphSommet avec les Sommets d'un graph donné
 	for sommet := range ListeNd(graph){
 		f := GraphSommet{true, 1, listSommet[sommet]}
 		listGraphSommet = append(listGraphSommet, f)
 	}
 
-
+	//création des chan pour faire communiquer worker et main
+	//jobs : channel des datas
+	//results : channel de wait group (s'assurer que toutes les go routines ont fini)
 	jobs := make(chan GraphSommet, nbSommets)
 	results := make(chan string, nbSommets)
 
+	//Initialisation des Workers
 	for i := 1; i <= 5; i++{
 		go worker(i, jobs, results)
 	}
 
+	//Envoi de la Data
 	for j := 0; j < nbSommets; j++ {
 		jobs <- listGraphSommet[j]
 	}
-	close(jobs)
+	close(jobs) //Fermeture du chan
 
+	//Vide le channel résultats
 	for a :=0; a < nbSommets; a++ {
 		<-results
+
 	}
 
 }
