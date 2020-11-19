@@ -134,7 +134,7 @@ func getBestNonVisitedNode(distTab map[Nd]int, visited []Nd) (Nd) {
 //Recuperer distance entre 2 noeuds a partir graph
 func GetDistance(dep Nd, fin Nd) (distance int){
 	for i := range graph[dep]{
-		if (graph[dep][i].dep==dep && graph[dep][i].fin==fin){
+		if graph[dep][i].dep==dep && graph[dep][i].fin==fin {
 			distance = graph[dep][i].poids
 		}
 	}
@@ -178,12 +178,14 @@ func Djikstra(initNd Nd) (plusCourtChemin string) {
 				ResTab[lien.fin] = lien
 
 			}
+			//Rajouter la condition "2 chemins égaux"
 		}
 
 	}
 	//for nd, distance := range distTab {
 		//plusCourtChemin += fmt.Sprintf("La distance de %s à %s est %d \n", initNd, nd.nom, distance)
 	//}
+	plusCourtChemin += fmt.Sprintf("Djikstra pour le Sommet %s \n", initNd)
 	for dest, lien := range ResTab {
 		plusCourtChemin += fmt.Sprintf("%s --> %s, %d \n", lien.dep, dest, lien.poids)
 		}
@@ -195,9 +197,9 @@ func Djikstra(initNd Nd) (plusCourtChemin string) {
 func worker(id int, work chan GraphSommet, results chan string){
 	for f := range work {
 		if f.Job {
-			fmt.Printf("Go routine %d réalise un Djikstra pour le sommet %s \n", id, f.Sommet.nom)
+			fmt.Printf("Go routine %d réalise un Djikstra \n", id)
 			fmt.Println(Djikstra(f.Sommet))
-			fmt.Printf("Go routine %d a fini le Djikstra pour le sommet %s \n", id, f.Sommet.nom)
+			fmt.Printf("Go routine %d a fini le Djikstra \n", id)
 			results <- Djikstra(f.Sommet)
 
 		}
