@@ -22,6 +22,12 @@ type Lien struct {
 	poids int
 }
 
+type GraphSommet struct {
+	Job bool
+	idGraph int
+	Sommet Nd
+}
+
 var graph map[Nd][]Lien = makeGraph()
 
 func getArgs() int {
@@ -116,7 +122,7 @@ func main() {
 
 		//Client envoie le graphe lu, ligne par ligne jusqua EOF au serveur
 		for i := 0; i < ListeNd(graph); i++ { //checker si ListeNd nous donne bien le nb de lignes du graphe
-			if i < ListeNd(graph)-1 {
+			if i < (ListeNd(graph)-1) {
 				io.WriteString(conn, fmt.Sprintf(graph[i]))
 			} else {
 				io.WriteString(conn, fmt.Sprintf("EOF"))
