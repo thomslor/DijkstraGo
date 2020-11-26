@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 )
-
+/*
 type Nd struct {
 	nom string
 }
@@ -29,7 +29,7 @@ type GraphSommet struct {
 }
 
 var graph map[Nd][]Lien = makeGraph()
-
+*/
 func getArgs() int {
 	//Make sure we have an argument
 	if len(os.Args) != 2 {
@@ -121,8 +121,8 @@ func main() {
 		makeGraph()
 
 		//Client envoie le graphe lu, ligne par ligne jusqua EOF au serveur
-		for i := 0; i < ListeNd(graph); i++ { //checker si ListeNd nous donne bien le nb de lignes du graphe
-			if i < (ListeNd(graph)-1) {
+		for i := 0; i < len(ListeNd(graph)); i++ { //checker si ListeNd nous donne bien le nb de lignes du graphe
+			if i < len((ListeNd(graph)))-1 {
 				io.WriteString(conn, fmt.Sprintf(graph[i]))
 			} else {
 				io.WriteString(conn, fmt.Sprintf("EOF"))
