@@ -242,14 +242,11 @@ func handleConnection(connection net.Conn, connum int) {
 	//PFR !!!
 	defer connection.Close()
 	connReader := bufio.NewReader(connection)
-	//    if err !=nil{
-	//        fmt.Printf("#DEBUG %d handleConnection could not create reader\n", connum)
-	//        return
-	//    }
 
 	for {
 		//on lit la ligne recue du client
-		inputLine, err := connReader.ReadString(' ')
+		inputLine, err := connReader.ReadString('\n')
+		fmt.Print(inputLine)
 		if err != nil {
 			fmt.Printf("#DEBUG %d RCV ERROR no panic, just a client\n", connum)
 			fmt.Printf("#DEBUG Error :|%s|\n", err.Error())
@@ -257,7 +254,7 @@ func handleConnection(connection net.Conn, connum int) {
 		}
 
 		//print la ligne recue
-		inputLine = strings.TrimSuffix(inputLine, " ")
+		inputLine = strings.TrimSuffix(inputLine, "\n")
 		fmt.Printf("#DEBUG %d RCV |%s|\n", connum, inputLine)
 
 		//convertir le res3 de string vers int

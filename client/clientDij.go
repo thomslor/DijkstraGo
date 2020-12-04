@@ -67,8 +67,7 @@ func main() {
 		reader := bufio.NewReader(conn)
 		fmt.Printf("#DEBUG MAIN connected\n")
 
-		//Client lit le graphe texte et créé un graphe string
-
+		//Client lit le graphe texte et l'envoi en format string ligne par ligne
 		f, err := os.Open("graph.txt")
 		defer f.Close()
 		if err != nil {
