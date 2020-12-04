@@ -3,6 +3,8 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
+	"log"
 	"net"
 	"os"
 	"strconv"
@@ -66,17 +68,36 @@ func main() {
 		defer conn.Close()
 		reader := bufio.NewReader(conn)
 		fmt.Printf("#DEBUG MAIN connected\n")
+
 		//Client lit le graphe texte et créé un graphe
 
-		//Client envoie le graphe lu, ligne par ligne jusqua EOF au serveur
+		f, err := os.Open("graph.txt")
+		defer f.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
 
-		/*for i := 0; i < len(tabGraph(graph)); i++ {
-			if i < len((tabGraph(graph)))-1 {
-				io.WriteString(conn, fmt.Sprintf(tabGraph(graph)[i]))
-			} else {
-				io.WriteString(conn, fmt.Sprintf("EOF"))
+		rd := bufio.NewReader(f)
+
+		for {
+
+			line, err := rd.ReadString('\n')
+			if err == io.EOF {
+				break
 			}
-		}*/
+
+			if err != nil {
+				log.Fatal(err)
+			}
+			tsep := strings.Split(line, ";")
+			res1 := tsep[0]                             //noeud de depart
+			res2 := tsep[1]                             //noeud d'arrivee
+			resq := strings.TrimSuffix(tsep[2], "\r\n") //poids lien + passage a la ligne
+			//fmt.Println(res1, res2, resq)
+
+			//Client envoie le graphe lu, ligne par ligne jusqua EOF au serveur
+			io.WriteString(conn, fmt.Sprintf(res1, res2, resq))
+		}
 
 		//Apres l'envoi, le client attend une reponse du serveur avec les chemins les plus courts
 		resultString, err := reader.ReadString('\n')

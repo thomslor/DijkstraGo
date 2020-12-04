@@ -4,10 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"log"
 	"net"
 	"os"
-	"sort"
 	"strconv"
 	"strings"
 )
@@ -28,9 +26,9 @@ type GraphSommet struct {
 	Sommet  Nd
 }
 
-var graph map[Nd][]Lien = makeGraph()
+//var graph map[Nd][]Lien = makeGraph()
 
-const Infinity = int(^uint(0) >> 1)
+//const Infinity = int(^uint(0) >> 1)
 
 func getArgs() int {
 	//On verifie qu'on a bien 2 arguments
@@ -53,6 +51,7 @@ func getArgs() int {
 	return -1
 }
 
+/*
 //fonction qui nous donne la liste des noeuds du graphe en entrée
 func ListeNd(graph map[Nd][]Lien) []Nd {
 	keys := make([]Nd, 0, len(graph))
@@ -163,6 +162,7 @@ func Djikstra(initNd Nd) (plusCourtChemin string) {
 	return plusCourtChemin
 }
 
+
 //fonction qui permet de créer un graphe avec un fichier .txt
 func makeGraph() map[Nd][]Lien {
 	graph := make(map[Nd][]Lien)
@@ -201,7 +201,7 @@ func makeGraph() map[Nd][]Lien {
 	}
 	return graph
 
-}
+}*/
 
 func main() {
 	port := getArgs()
