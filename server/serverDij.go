@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"net"
 	"os"
 	"strconv"
@@ -246,7 +245,10 @@ func handleConnection(connection net.Conn, connum int) {
 	for {
 		//on lit la ligne recue du client
 		inputLine, err := connReader.ReadString('\n')
-		fmt.Print(inputLine)
+		fmt.Printf("%s \n", inputLine )
+
+
+
 		if err != nil {
 			fmt.Printf("#DEBUG %d RCV ERROR no panic, just a client\n", connum)
 			fmt.Printf("#DEBUG Error :|%s|\n", err.Error())
@@ -269,11 +271,15 @@ func handleConnection(connection net.Conn, connum int) {
 		//envoie les plus courts chemins au client
 
 		//truc du prof pour exemple :
+		/*
 		splitLine := strings.Split(inputLine, " ")
 		returnedString := splitLine[len(splitLine)-1]
 		//fmt.Printf("#DEBUG %d SND |%s|\n", connum, returnedString)
 
 		io.WriteString(connection, fmt.Sprintf("%s\n", returnedString))
+
+		 */
+
 
 	}
 
