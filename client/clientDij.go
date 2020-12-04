@@ -74,29 +74,10 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-
-		rd := bufio.NewReader(f)
-
-		for {
-
-			line, err := rd.ReadString('\n')
-			if err == io.EOF {
-				break
-			}
-
-			if err != nil {
-				log.Fatal(err)
-			}
-			//ligne := strings.TrimSuffix(line, "\r\n")
-
-			tsep := strings.Split(line, ";")
-			res1 := tsep[0]                             //noeud de depart
-			res2 := tsep[1]                             //noeud d'arrivee
-			resq := strings.TrimSuffix(tsep[2], "\r\n") //poids lien + passage a la ligne
-			//fmt.Println(res1, res2, resq)
-
-			//Client envoie le graphe lu, ligne par ligne jusqua EOF au serveur
-			io.WriteString(conn, fmt.Sprintf("%s %s %s", res1, res2, resq))
+		scanner := bufio.NewScanner(f)
+		for scanner.Scan() {
+			//fmt.Println(scanner.Text())
+			io.WriteString(conn, scanner.Text())
 		}
 
 		//Apres l'envoi, le client attend une reponse du serveur avec les chemins les plus courts
