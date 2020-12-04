@@ -48,8 +48,6 @@ func getArgs() int {
 	return -1
 }
 
-//faire une fonction qui lit le graph et le met dans un tableau (et attribue un poid random au graph)
-
 func main() {
 	//Get the port number
 	port := getArgs()
@@ -69,7 +67,7 @@ func main() {
 		reader := bufio.NewReader(conn)
 		fmt.Printf("#DEBUG MAIN connected\n")
 
-		//Client lit le graphe texte et créé un graphe
+		//Client lit le graphe texte et créé un graphe string
 
 		f, err := os.Open("graph.txt")
 		defer f.Close()
@@ -89,6 +87,8 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
+			//ligne := strings.TrimSuffix(line, "\r\n")
+
 			tsep := strings.Split(line, ";")
 			res1 := tsep[0]                             //noeud de depart
 			res2 := tsep[1]                             //noeud d'arrivee
@@ -96,11 +96,11 @@ func main() {
 			//fmt.Println(res1, res2, resq)
 
 			//Client envoie le graphe lu, ligne par ligne jusqua EOF au serveur
-			io.WriteString(conn, fmt.Sprintf(res1, res2, resq))
+			io.WriteString(conn, fmt.Sprintf("%s %s %s", res1, res2, resq))
 		}
 
 		//Apres l'envoi, le client attend une reponse du serveur avec les chemins les plus courts
-		resultString, err := reader.ReadString('\n')
+		resultString, err := reader.ReadString(' ')
 		if err != nil {
 			fmt.Printf("DEBUG MAIN could not read from server")
 			os.Exit(1)

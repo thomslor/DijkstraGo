@@ -249,7 +249,7 @@ func handleConnection(connection net.Conn, connum int) {
 
 	for {
 		//on lit la ligne recue du client
-		inputLine, err := connReader.ReadString('\n')
+		inputLine, err := connReader.ReadString(' ')
 		if err != nil {
 			fmt.Printf("#DEBUG %d RCV ERROR no panic, just a client\n", connum)
 			fmt.Printf("#DEBUG Error :|%s|\n", err.Error())
@@ -257,11 +257,11 @@ func handleConnection(connection net.Conn, connum int) {
 		}
 
 		//print la ligne recue
-		inputLine = strings.TrimSuffix(inputLine, "\n")
+		inputLine = strings.TrimSuffix(inputLine, " ")
 		fmt.Printf("#DEBUG %d RCV |%s|\n", connum, inputLine)
 
+		//convertir le res3 de string vers int
 		//Stocke la ligne recue
-
 		//Construit un graphe grace a la ligne recue
 
 		//Applique Dijkstra au graphe
@@ -274,7 +274,7 @@ func handleConnection(connection net.Conn, connum int) {
 		//truc du prof pour exemple :
 		splitLine := strings.Split(inputLine, " ")
 		returnedString := splitLine[len(splitLine)-1]
-		fmt.Printf("#DEBUG %d SND |%s|\n", connum, returnedString)
+		//fmt.Printf("#DEBUG %d SND |%s|\n", connum, returnedString)
 
 		io.WriteString(connection, fmt.Sprintf("%s\n", returnedString))
 
