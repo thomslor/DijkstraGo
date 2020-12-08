@@ -25,7 +25,7 @@ type GraphSommet struct {
 	Sommet  Nd
 }
 
-//var graph map[Nd][]Lien = makeGraph()
+var graph map[Nd][]Lien
 
 //const Infinity = int(^uint(0) >> 1)
 
@@ -162,45 +162,14 @@ func Djikstra(initNd Nd) (plusCourtChemin string) {
 }
 
 
-//fonction qui permet de créer un graphe avec un fichier .txt
-func makeGraph() map[Nd][]Lien {
-	graph := make(map[Nd][]Lien)
-	f, err := os.Open("graph.txt")
-	defer f.Close()
-	if err != nil {
-		log.Fatal(err)
-	}
 
-	rd := bufio.NewReader(f)
-
-	for {
-
-		line, err := rd.ReadString('\n')
-		if err == io.EOF {
-			break
-		}
-
-		if err != nil {
-			log.Fatal(err)
-		}
-		tsep := strings.Split(line, ";")
-		res1 := Nd{nom: tsep[0]}
-		res2 := Nd{nom: tsep[1]}
-		resq := strings.TrimSuffix(tsep[2], "\r\n")
-		res3, err := strconv.Atoi(resq)
-		if err == nil {
-			//fmt.Println(res3)
-		}
-
-		lien := Lien{res1, res2, res3}
-
-		graph[res1] = append(graph[res1], lien)
-
-		//fmt.Println("Depart:", res1, "|", "Fin:", res2, "|", "ID: ", res3, "|", "Distance:")
-	}
-	return graph
 
 }*/
+func getGraph(graph map[Nd][]Lien) {
+	for i := range graph {
+		fmt.Println(graph[i])
+	}
+}
 
 func main() {
 	port := getArgs()
@@ -233,6 +202,7 @@ func main() {
 
 		go handleConnection(conn, connum)
 		connum += 1
+		
 
 	}
 }
@@ -245,7 +215,6 @@ func handleConnection(connection net.Conn, connum int) {
 	for {
 		//on lit la ligne recue du client
 		inputLine, err := connReader.ReadString('\n')
-		fmt.Printf("%s \n", inputLine )
 
 
 
@@ -259,9 +228,21 @@ func handleConnection(connection net.Conn, connum int) {
 		inputLine = strings.TrimSuffix(inputLine, "\n")
 		fmt.Printf("#DEBUG %d RCV |%s|\n", connum, inputLine)
 
+
 		//convertir le res3 de string vers int
 		//Stocke la ligne recue
 		//Construit un graphe grace a la ligne recue
+		graph := make(map[Nd][]Lien)
+		tsep := strings.Split(inputLine, ";")
+		res1 := Nd{nom: tsep[0]}
+		res2 := Nd{nom: tsep[1]}
+		resq := strings.TrimSuffix(tsep[2], "\r\n")
+		res3, err := strconv.Atoi(resq)
+
+		lien := Lien{res1, res2, res3}
+
+		graph[res1] = append(graph[res1], lien)
+
 
 		//Applique Dijkstra au graphe
 
@@ -282,5 +263,6 @@ func handleConnection(connection net.Conn, connum int) {
 
 
 	}
+
 
 }
