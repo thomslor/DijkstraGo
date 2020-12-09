@@ -1,0 +1,5 @@
+(WIP)
+
+Client : Récupère le graph via la lecture et l'envoi via TCP des lignes du fichier graph.txt
+
+Serveur : récupère les lignes du client, crée un graph, applique Dijkstra et renvoie les lignes de résultats au client
