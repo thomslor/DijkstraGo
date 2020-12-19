@@ -22,9 +22,9 @@ type Lien struct {
 }
 
 type GraphSommet struct {
-	Job bool
+	Job     bool
 	idGraph int
-	Sommet Nd
+	Sommet  Nd
 }
 
 var graph map[Nd][]Lien = makeGraph()
@@ -41,7 +41,7 @@ func getGraph(graph map[Nd][]Lien) {
 //fonction qui permet de créer un graphe avec un fichier .txt
 func makeGraph() map[Nd][]Lien {
 	graph := make(map[Nd][]Lien)
-	f, err := os.Open("graph.txt")
+	f, err := os.Open("graph2.txt")
 	defer f.Close()
 	if err != nil {
 		log.Fatal(err)
@@ -71,7 +71,6 @@ func makeGraph() map[Nd][]Lien {
 		lien := Lien{res1, res2, res3}
 
 		graph[res1] = append(graph[res1], lien)
-
 
 		//fmt.Println("Depart:", res1, "|", "Fin:", res2, "|", "ID: ", res3, "|", "Distance:")
 	}
@@ -104,7 +103,7 @@ func NewDistTab(NdInit Nd) map[Nd]int {
 }
 
 //fonction qui donne le noeud non visité avec la plus petite distance
-func getBestNonVisitedNode(distTab map[Nd]int, visited []Nd) (Nd) {
+func getBestNonVisitedNode(distTab map[Nd]int, visited []Nd) Nd {
 	type DistTabATrier struct {
 		Node     Nd
 		Distance int
@@ -132,9 +131,9 @@ func getBestNonVisitedNode(distTab map[Nd]int, visited []Nd) (Nd) {
 }
 
 //Recuperer distance entre 2 noeuds a partir graph
-func GetDistance(dep Nd, fin Nd) (distance int){
-	for i := range graph[dep]{
-		if graph[dep][i].dep==dep && graph[dep][i].fin==fin {
+func GetDistance(dep Nd, fin Nd) (distance int) {
+	for i := range graph[dep] {
+		if graph[dep][i].dep == dep && graph[dep][i].fin == fin {
 			distance = graph[dep][i].poids
 		}
 	}
@@ -144,7 +143,6 @@ func GetDistance(dep Nd, fin Nd) (distance int){
 //ALGORITHME DE DIJKSTRA : la fonction renvoie le chemin le plus court du noeud source a tous les autres noeuds
 func Djikstra(initNd Nd) (plusCourtChemin string) {
 
-
 	//Creation du tableau de distances
 	distTab := NewDistTab(initNd)
 	//fmt.Println(distTab)
@@ -152,7 +150,6 @@ func Djikstra(initNd Nd) (plusCourtChemin string) {
 
 	//Creation d'une liste vide des noeuds visites. Des qu'un noeud est visite, il est ajoute a la liste
 	var visiteOK []Nd
-
 
 	//Creation d'une boucle pour visiter tous les noeuds
 	for len(visiteOK) != len(ListeNd(graph)) {
@@ -162,8 +159,6 @@ func Djikstra(initNd Nd) (plusCourtChemin string) {
 
 		//On marque le noeud comme etant visite
 		visiteOK = append(visiteOK, nd)
-
-
 
 		//On prend les voisins du noeud visite (liste de liens)
 		voisins := graph[nd]
@@ -183,18 +178,18 @@ func Djikstra(initNd Nd) (plusCourtChemin string) {
 
 	}
 	//for nd, distance := range distTab {
-		//plusCourtChemin += fmt.Sprintf("La distance de %s à %s est %d \n", initNd, nd.nom, distance)
+	//plusCourtChemin += fmt.Sprintf("La distance de %s à %s est %d \n", initNd, nd.nom, distance)
 	//}
 	plusCourtChemin += fmt.Sprintf("Djikstra pour le Sommet %s \n", initNd)
 	for dest, lien := range ResTab {
 		plusCourtChemin += fmt.Sprintf("%s --> %s, %d \n", lien.dep, dest, lien.poids)
-		}
+	}
 
 	return plusCourtChemin
 
 }
 
-func worker(id int, work chan GraphSommet, results chan string){
+func worker(id int, work chan GraphSommet, results chan string) {
 	for f := range work {
 		if f.Job {
 			fmt.Printf("Go routine %d réalise un Djikstra \n", id)
@@ -213,9 +208,8 @@ func main() {
 	listSommet := ListeNd(graph)
 	listGraphSommet := make([]GraphSommet, 0, nbSommets)
 
-
 	//remplit GraphSommet avec les Sommets d'un graph donné
-	for sommet := range ListeNd(graph){
+	for sommet := range ListeNd(graph) {
 		f := GraphSommet{true, 1, listSommet[sommet]}
 		listGraphSommet = append(listGraphSommet, f)
 	}
@@ -227,7 +221,7 @@ func main() {
 	results := make(chan string, nbSommets)
 
 	//Initialisation des Workers
-	for i := 1; i <= 5; i++{
+	for i := 1; i <= 5; i++ {
 		go worker(i, jobs, results)
 	}
 
@@ -238,7 +232,7 @@ func main() {
 	close(jobs) //Fermeture du chan
 
 	//Vide le channel résultats
-	for a :=0; a < nbSommets; a++ {
+	for a := 0; a < nbSommets; a++ {
 		<-results
 
 	}
