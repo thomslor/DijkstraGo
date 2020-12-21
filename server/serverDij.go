@@ -313,25 +313,38 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 		*/
 
 	}
+	//nombre de sommets du graphe :
 	nbSommets := len(ListeNd(graph))
+
+	//liste des sommets du graphe :
 	listSommet := ListeNd(graph)
+
+	//liste des sommets avec l'id du graph (qui est l'id du client) et un boolean Job :
 	listGraphSommet := make([]GraphSommet, 0, nbSommets)
 
+	//pour chaque sommet du graphe, on definit un GraphSommet qui a un Job=true, l'id de connexion du client et la liste de sommets du graphe
+	//puis on remplit notre slice listGraphSommet
 	for sommet := range ListeNd(graph) {
 		f := GraphSommet{true, connum, listSommet[sommet]}
 		listGraphSommet = append(listGraphSommet, f)
 	}
 
+	//permet d'envoyer les noeuds sur lesquels on va appliquer dijkstra via le channel jobs
 	for j := 0; j < nbSommets; j++ {
 		jobs <- listGraphSommet[j]
 	}
 
 	compteur := 0
 
+	//permet de synchroniser les go routines
+	//tant que le compteur est plus petit que le nb de sommets
 	for compteur < nbSommets {
+		//on lit le message dans le channel results
 		t := <-results
+		//si ce n'est pas son graphe, la connexion remet le message dans le channel
 		if <-results != connum {
 			results <- t
+			//si c'est son graph, la connexion enleve le message du channel et ajoute 1 au compteur
 		} else {
 			<-results
 			compteur += 1
