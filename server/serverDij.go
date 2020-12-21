@@ -3,8 +3,10 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"net"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -26,8 +28,9 @@ type GraphSommet struct {
 }
 
 var graph map[Nd][]Lien
+var sortie map[int]string
 
-//const Infinity = int(^uint(0) >> 1)
+const Infinity = int(^uint(0) >> 1)
 
 func getArgs() int {
 	//On verifie qu'on a bien 2 arguments
@@ -50,7 +53,6 @@ func getArgs() int {
 	return -1
 }
 
-/*
 //fonction qui nous donne la liste des noeuds du graphe en entrée
 func ListeNd(graph map[Nd][]Lien) []Nd {
 	keys := make([]Nd, 0, len(graph))
@@ -114,7 +116,7 @@ func GetDistance(dep Nd, fin Nd) (distance int) {
 }
 
 //ALGORITHME DE DIJKSTRA : la fonction renvoie le chemin le plus court du noeud source a tous les autres noeuds
-func Djikstra(initNd Nd) (plusCourtChemin string) {
+func Dijkstra(initNd Nd) (plusCourtChemin string) {
 
 	//Creation du tableau de distances
 	distTab := NewDistTab(initNd)
@@ -161,13 +163,18 @@ func Djikstra(initNd Nd) (plusCourtChemin string) {
 	return plusCourtChemin
 }
 
-
-
-
-}*/
 func getGraph(graph map[Nd][]Lien) {
 	for i := range graph {
 		fmt.Println(graph[i])
+	}
+}
+
+func worker(id int, work chan GraphSommet, results chan int, sortie map[int]string) {
+	for f := range work {
+		if f.Job {
+			sortie[f.idGraph] = Dijkstra(f.Sommet)
+			results <- f.idGraph
+		}
 	}
 }
 
@@ -188,6 +195,22 @@ func main() {
 	//connum = id de connexion
 	connum := 1
 
+	//Création d'un tableau où seront stockés les résultats du Dijkstra de chaque client
+	sortie = make(map[int]string)
+
+	//remplit GraphSommet avec les Sommets d'un graph donné
+
+	//création des chan pour faire communiquer worker et main
+	//jobs : channel des datas
+	//results : channel de wait group (s'assurer que toutes les go routines ont fini)
+	jobs := make(chan GraphSommet, 100)
+	results := make(chan int, 100)
+
+	//Initialisation des Workers
+	for i := 1; i <= 5; i++ {
+		go worker(i, jobs, results, sortie)
+	}
+
 	for {
 		fmt.Printf("#DEBUG MAIN Accepting next connection\n")
 		conn, errconn := ln.Accept()
@@ -200,14 +223,13 @@ func main() {
 
 		//If we're here, we did not panic and conn is a valid handler to the new connection
 
-		go handleConnection(conn, connum)
+		go handleConnection(conn, connum, jobs, results, sortie)
 		connum += 1
-		
 
 	}
 }
 
-func handleConnection(connection net.Conn, connum int) {
+func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, results chan int, sortie map[int]string) {
 	//PFR !!!
 	defer connection.Close()
 	connReader := bufio.NewReader(connection)
@@ -215,8 +237,6 @@ func handleConnection(connection net.Conn, connum int) {
 	for {
 		//on lit la ligne recue du client
 		inputLine, err := connReader.ReadString('\n')
-
-
 
 		if err != nil {
 			fmt.Printf("#DEBUG %d RCV ERROR no panic, just a client\n", connum)
@@ -226,8 +246,11 @@ func handleConnection(connection net.Conn, connum int) {
 
 		//print la ligne recue
 		inputLine = strings.TrimSuffix(inputLine, "\n")
-		fmt.Printf("#DEBUG %d RCV |%s|\n", connum, inputLine)
+		if inputLine == "EOF" {
+			break
+		}
 
+		fmt.Printf("#DEBUG %d RCV |%s|\n", connum, inputLine)
 
 		//convertir le res3 de string vers int
 		//Stocke la ligne recue
@@ -237,32 +260,84 @@ func handleConnection(connection net.Conn, connum int) {
 		res1 := Nd{nom: tsep[0]}
 		res2 := Nd{nom: tsep[1]}
 		resq := strings.TrimSuffix(tsep[2], "\r\n")
-		res3, err := strconv.Atoi(resq)
+		res3, _ := strconv.Atoi(resq)
 
 		lien := Lien{res1, res2, res3}
 
 		graph[res1] = append(graph[res1], lien)
 
-
-		//Applique Dijkstra au graphe
-
-		//ENVOI DU GRAPH AU CLIENT
-		//print la ligne a envoyer au client
-
-		//envoie les plus courts chemins au client
-
-		//truc du prof pour exemple :
 		/*
-		splitLine := strings.Split(inputLine, " ")
-		returnedString := splitLine[len(splitLine)-1]
-		//fmt.Printf("#DEBUG %d SND |%s|\n", connum, returnedString)
+			nbSommets := len(ListeNd(graph))
+			listSommet := ListeNd(graph)
+			listGraphSommet := make([]GraphSommet, 0, nbSommets)
 
-		io.WriteString(connection, fmt.Sprintf("%s\n", returnedString))
+			for sommet := range ListeNd(graph) {
+				f := GraphSommet{true, connum, listSommet[sommet]}
+				listGraphSommet = append(listGraphSommet, f)
+			}
 
-		 */
+			for j := 0; j < nbSommets; j++ {
+				jobs <- listGraphSommet[j]
+			}
 
+			compteur :=0
+
+			for compteur < nbSommets{
+				t := <-results
+				if <-results != connum{
+					results <- t
+				}else {
+					<-results
+					compteur +=1
+				}
+			}
+			returnString := sortie[connum]
+			io.WriteString(connection, fmt.Sprintf("%s\n", returnString))
+
+
+			//Applique Dijkstra au graphe
+
+			//ENVOI DU GRAPH AU CLIENT
+			//print la ligne a envoyer au client
+
+			//envoie les plus courts chemins au client
+
+			//truc du prof pour exemple :
+			/*
+			splitLine := strings.Split(inputLine, " ")
+			returnedString := splitLine[len(splitLine)-1]
+			//fmt.Printf("#DEBUG %d SND |%s|\n", connum, returnedString)
+
+			io.WriteString(connection, fmt.Sprintf("%s\n", returnedString))
+
+		*/
 
 	}
+	nbSommets := len(ListeNd(graph))
+	listSommet := ListeNd(graph)
+	listGraphSommet := make([]GraphSommet, 0, nbSommets)
 
+	for sommet := range ListeNd(graph) {
+		f := GraphSommet{true, connum, listSommet[sommet]}
+		listGraphSommet = append(listGraphSommet, f)
+	}
+
+	for j := 0; j < nbSommets; j++ {
+		jobs <- listGraphSommet[j]
+	}
+
+	compteur := 0
+
+	for compteur < nbSommets {
+		t := <-results
+		if <-results != connum {
+			results <- t
+		} else {
+			<-results
+			compteur += 1
+		}
+	}
+	returnString := sortie[connum]
+	io.WriteString(connection, fmt.Sprintf("%s\n", returnString))
 
 }
