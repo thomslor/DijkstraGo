@@ -76,7 +76,7 @@ func main() {
 		scanner := bufio.NewScanner(f)
 		for scanner.Scan() {
 			fmt.Println(scanner.Text())
-			io.WriteString(conn, fmt.Sprintf("%s \n", scanner.Text()))
+			io.WriteString(conn, fmt.Sprintf("%s\n", scanner.Text()))
 		}
 
 		//Apres l'envoi, le client attend une reponse du serveur avec les chemins les plus courts

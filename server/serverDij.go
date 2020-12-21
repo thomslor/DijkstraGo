@@ -159,7 +159,8 @@ func Dijkstra(initNd Nd) (plusCourtChemin string) {
 	for dest, lien := range ResTab {
 		plusCourtChemin += fmt.Sprintf("%s --> %s, %d \n", lien.dep, dest, lien.poids)
 	}
-
+	fmt.Println(plusCourtChemin) //pb : n'affiche pas les chemin, possible qu'il ne trouve pas le graphe
+	//idee : creer un struct avec un graph et un ID
 	return plusCourtChemin
 }
 
@@ -173,6 +174,7 @@ func worker(id int, work chan GraphSommet, results chan int, sortie map[int]stri
 	for f := range work {
 		if f.Job {
 			sortie[f.idGraph] = Dijkstra(f.Sommet)
+			//fmt.Println(Dijkstra(f.Sommet)) //pb n'affiche pas les chemins
 			results <- f.idGraph
 		}
 	}
@@ -233,6 +235,7 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 	//PFR !!!
 	defer connection.Close()
 	connReader := bufio.NewReader(connection)
+	graph := make(map[Nd][]Lien)
 
 	for {
 		//on lit la ligne recue du client
@@ -255,12 +258,15 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 		//convertir le res3 de string vers int
 		//Stocke la ligne recue
 		//Construit un graphe grace a la ligne recue
-		graph := make(map[Nd][]Lien)
+
 		tsep := strings.Split(inputLine, ";")
 		res1 := Nd{nom: tsep[0]}
 		res2 := Nd{nom: tsep[1]}
-		resq := strings.TrimSuffix(tsep[2], "\r\n")
-		res3, _ := strconv.Atoi(resq)
+		resq := strings.TrimSuffix(tsep[2], "\n")
+		res3, erreur := strconv.Atoi(resq)
+		if erreur != nil {
+			fmt.Println(erreur)
+		}
 
 		lien := Lien{res1, res2, res3}
 
@@ -313,6 +319,7 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 		*/
 
 	}
+
 	//nombre de sommets du graphe :
 	nbSommets := len(ListeNd(graph))
 
@@ -333,6 +340,8 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 	for j := 0; j < nbSommets; j++ {
 		jobs <- listGraphSommet[j]
 	}
+
+	fmt.Println(sortie[connum]) //pb ca n'affiche rien
 
 	compteur := 0
 
