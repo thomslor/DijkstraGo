@@ -24,10 +24,10 @@ type Lien struct {
 type GraphSommet struct {
 	Job     bool
 	idGraph int
+	graph   map[Nd][]Lien
 	Sommet  Nd
 }
 
-var graph map[Nd][]Lien
 var sortie map[int]string
 
 const Infinity = int(^uint(0) >> 1)
@@ -64,7 +64,7 @@ func ListeNd(graph map[Nd][]Lien) []Nd {
 
 //fonction qui créé le tableau initial de distances à partir du graphe en entrée
 //le noeud source se voit attribuer la valeur 0 et tous les autres noeuds la valeur infinie
-func NewDistTab(NdInit Nd) map[Nd]int {
+func NewDistTab(NdInit Nd, graph map[Nd][]Lien) map[Nd]int {
 	DistTab := make(map[Nd]int)
 	DistTab[NdInit] = 0
 
@@ -105,8 +105,9 @@ func getBestNonVisitedNode(distTab map[Nd]int, visited []Nd) Nd {
 	return triOK[0].Node
 }
 
+/*
 //Recuperer distance entre 2 noeuds a partir graph
-func GetDistance(dep Nd, fin Nd) (distance int) {
+func GetDistance(dep Nd, fin Nd, graph map[Nd][]Lien) (distance int) {
 	for i := range graph[dep] {
 		if graph[dep][i].dep == dep && graph[dep][i].fin == fin {
 			distance = graph[dep][i].poids
@@ -114,12 +115,12 @@ func GetDistance(dep Nd, fin Nd) (distance int) {
 	}
 	return distance
 }
-
+*/
 //ALGORITHME DE DIJKSTRA : la fonction renvoie le chemin le plus court du noeud source a tous les autres noeuds
-func Dijkstra(initNd Nd) (plusCourtChemin string) {
+func Dijkstra(initNd Nd, graph map[Nd][]Lien) (plusCourtChemin string) {
 
 	//Creation du tableau de distances
-	distTab := NewDistTab(initNd)
+	distTab := NewDistTab(initNd, graph)
 	//fmt.Println(distTab)
 	ResTab := make(map[Nd]Lien)
 
@@ -173,8 +174,7 @@ func getGraph(graph map[Nd][]Lien) {
 func worker(id int, work chan GraphSommet, results chan int, sortie map[int]string) {
 	for f := range work {
 		if f.Job {
-			sortie[f.idGraph] = Dijkstra(f.Sommet)
-			//fmt.Println(Dijkstra(f.Sommet)) //pb n'affiche pas les chemins
+			sortie[f.idGraph] = Dijkstra(f.Sommet, f.graph)
 			results <- f.idGraph
 		}
 	}
@@ -332,7 +332,7 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 	//pour chaque sommet du graphe, on definit un GraphSommet qui a un Job=true, l'id de connexion du client et la liste de sommets du graphe
 	//puis on remplit notre slice listGraphSommet
 	for sommet := range ListeNd(graph) {
-		f := GraphSommet{true, connum, listSommet[sommet]}
+		f := GraphSommet{true, connum, graph, listSommet[sommet]}
 		listGraphSommet = append(listGraphSommet, f)
 	}
 
@@ -341,7 +341,7 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 		jobs <- listGraphSommet[j]
 	}
 
-	fmt.Println(sortie[connum]) //pb ca n'affiche rien
+	fmt.Println(sortie[connum])
 
 	compteur := 0
 
