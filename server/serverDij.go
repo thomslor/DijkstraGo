@@ -272,52 +272,6 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 
 		graph[res1] = append(graph[res1], lien)
 
-		/*
-			nbSommets := len(ListeNd(graph))
-			listSommet := ListeNd(graph)
-			listGraphSommet := make([]GraphSommet, 0, nbSommets)
-
-			for sommet := range ListeNd(graph) {
-				f := GraphSommet{true, connum, listSommet[sommet]}
-				listGraphSommet = append(listGraphSommet, f)
-			}
-
-			for j := 0; j < nbSommets; j++ {
-				jobs <- listGraphSommet[j]
-			}
-
-			compteur :=0
-
-			for compteur < nbSommets{
-				t := <-results
-				if <-results != connum{
-					results <- t
-				}else {
-					<-results
-					compteur +=1
-				}
-			}
-			returnString := sortie[connum]
-			io.WriteString(connection, fmt.Sprintf("%s\n", returnString))
-
-
-			//Applique Dijkstra au graphe
-
-			//ENVOI DU GRAPH AU CLIENT
-			//print la ligne a envoyer au client
-
-			//envoie les plus courts chemins au client
-
-			//truc du prof pour exemple :
-			/*
-			splitLine := strings.Split(inputLine, " ")
-			returnedString := splitLine[len(splitLine)-1]
-			//fmt.Printf("#DEBUG %d SND |%s|\n", connum, returnedString)
-
-			io.WriteString(connection, fmt.Sprintf("%s\n", returnedString))
-
-		*/
-
 	}
 
 	//nombre de sommets du graphe :
@@ -360,7 +314,7 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 			}
 		}*/
 
-	//Vide le channel résultats
+	//Vide le channel résultats POUR  CLIENT
 	for a := 0; a < nbSommets; a++ {
 		<-results
 	}
