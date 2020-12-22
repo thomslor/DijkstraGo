@@ -160,8 +160,7 @@ func Dijkstra(initNd Nd, graph map[Nd][]Lien) (plusCourtChemin string) {
 	for dest, lien := range ResTab {
 		plusCourtChemin += fmt.Sprintf("%s --> %s, %d \n", lien.dep, dest, lien.poids)
 	}
-	fmt.Println(plusCourtChemin) //pb : n'affiche pas les chemin, possible qu'il ne trouve pas le graphe
-	//idee : creer un struct avec un graph et un ID
+	//fmt.Println(plusCourtChemin)
 	return plusCourtChemin
 }
 
@@ -174,7 +173,8 @@ func getGraph(graph map[Nd][]Lien) {
 func worker(id int, work chan GraphSommet, results chan int, sortie map[int]string) {
 	for f := range work {
 		if f.Job {
-			sortie[f.idGraph] = Dijkstra(f.Sommet, f.graph)
+			sortie[f.idGraph] += Dijkstra(f.Sommet, f.graph)
+			//fmt.Println(sortie)
 			results <- f.idGraph
 		}
 	}
@@ -341,25 +341,35 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 		jobs <- listGraphSommet[j]
 	}
 
-	fmt.Println(sortie[connum])
+	//compteur := 0
+	/*
+		//permet de synchroniser les go routines
+		//tant que le compteur est plus petit que le nb de sommets
+		for compteur < nbSommets {
+			//on lit le message dans le channel results
+			t := <-results
+			fmt.Println("cc")
+			//si ce n'est pas son graphe, la connexion remet le message dans le channel
+			if <-results != connum {
+				results <- t
+				fmt.Println("1er if")
+				//si c'est son graph, la connexion enleve le message du channel et ajoute 1 au compteur
+			} else {
+				compteur += 1
+				fmt.Println("2e if")
+			}
+		}*/
 
-	compteur := 0
-
-	//permet de synchroniser les go routines
-	//tant que le compteur est plus petit que le nb de sommets
-	for compteur < nbSommets {
-		//on lit le message dans le channel results
-		t := <-results
-		//si ce n'est pas son graphe, la connexion remet le message dans le channel
-		if <-results != connum {
-			results <- t
-			//si c'est son graph, la connexion enleve le message du channel et ajoute 1 au compteur
-		} else {
-			<-results
-			compteur += 1
-		}
+	//Vide le channel résultats
+	for a := 0; a < nbSommets; a++ {
+		<-results
 	}
-	returnString := sortie[connum]
+
+	//fmt.Println(sortie)
+	//fmt.Println(sortie[connum])
+
+	returnString := sortie[connum] + "$"
+	fmt.Println(returnString)
 	io.WriteString(connection, fmt.Sprintf("%s\n", returnString))
 
 }

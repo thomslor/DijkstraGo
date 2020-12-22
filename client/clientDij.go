@@ -80,12 +80,12 @@ func main() {
 		}
 
 		//Apres l'envoi, le client attend une reponse du serveur avec les chemins les plus courts
-		resultString, err := reader.ReadString(' ')
+		resultString, err := reader.ReadString('$')
 		if err != nil {
 			fmt.Printf("DEBUG MAIN could not read from server")
 			os.Exit(1)
 		}
-		resultString = strings.TrimSuffix(resultString, "\n")
+		resultString = strings.TrimSuffix(resultString, "$")
 		fmt.Printf("#DEBUG server replied : |%s|\n", resultString)
 		time.Sleep(1000 * time.Millisecond)
 
