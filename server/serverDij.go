@@ -33,8 +33,6 @@ type ResWorker struct {
 	id  int
 }
 
-var sortie map[int]string
-
 const Infinity = int(^uint(0) >> 1)
 
 func getArgs() int {
@@ -202,11 +200,6 @@ func main() {
 	//connum = id de connexion
 	connum := 1
 
-	//Création d'un tableau où seront stockés les résultats du Dijkstra de chaque client
-	sortie = make(map[int]string)
-
-	//remplit GraphSommet avec les Sommets d'un graph donné
-
 	//création des chan pour faire communiquer worker et main
 	//jobs : channel des datas
 	//results : channel de wait group (s'assurer que toutes les go routines ont fini)
@@ -300,6 +293,7 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 		jobs <- listGraphSommet[j]
 	}
 
+	returnString := ""
 	compteur := 0
 
 	//permet de synchroniser les go routines
@@ -307,7 +301,7 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 	for compteur != nbSommets {
 		t := <-results
 		if t.id == connum {
-			sortie[connum] += t.res
+			returnString += t.res
 			compteur += 1
 		} else {
 			results <- t
@@ -317,8 +311,9 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 	//fmt.Println(sortie)
 	//fmt.Println(sortie[connum])
 
-	returnString := sortie[connum] + "$"
-	fmt.Println(returnString)
-	io.WriteString(connection, fmt.Sprintf("%s\n", returnString))
+	returnString += "$"
+	//fmt.Println(returnString)
+	n, err := io.WriteString(connection, fmt.Sprintf("%s\n", returnString))
+	fmt.Println(err, " : ", n)
 
 }
