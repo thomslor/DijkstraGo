@@ -86,7 +86,7 @@ func main() {
 			os.Exit(1)
 		}
 		resultString = strings.TrimSuffix(resultString, "$")
-		fmt.Printf("#DEBUG server replied : |%s|\n", resultString)
+		fmt.Printf("#DEBUG server replied :\n%s\n", resultString)
 		time.Sleep(1000 * time.Millisecond)
 
 		//Stockage des infos recues dans un fichier texte

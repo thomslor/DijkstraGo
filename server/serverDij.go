@@ -28,6 +28,11 @@ type GraphSommet struct {
 	Sommet  Nd
 }
 
+type ResWorker struct {
+	res string
+	id  int
+}
+
 var sortie map[int]string
 
 const Infinity = int(^uint(0) >> 1)
@@ -170,12 +175,12 @@ func getGraph(graph map[Nd][]Lien) {
 	}
 }
 
-func worker(id int, work chan GraphSommet, results chan int, sortie map[int]string) {
+func worker(id int, work chan GraphSommet, results chan ResWorker) {
 	for f := range work {
 		if f.Job {
-			sortie[f.idGraph] += Dijkstra(f.Sommet, f.graph)
+			//sortie[f.idGraph] += Dijkstra(f.Sommet, f.graph)
 			//fmt.Println(sortie)
-			results <- f.idGraph
+			results <- ResWorker{Dijkstra(f.Sommet, f.graph), f.idGraph}
 		}
 	}
 }
@@ -206,11 +211,11 @@ func main() {
 	//jobs : channel des datas
 	//results : channel de wait group (s'assurer que toutes les go routines ont fini)
 	jobs := make(chan GraphSommet, 100)
-	results := make(chan int, 100)
+	results := make(chan ResWorker, 100)
 
 	//Initialisation des Workers
 	for i := 1; i <= 5; i++ {
-		go worker(i, jobs, results, sortie)
+		go worker(i, jobs, results)
 	}
 
 	for {
@@ -225,13 +230,13 @@ func main() {
 
 		//If we're here, we did not panic and conn is a valid handler to the new connection
 
-		go handleConnection(conn, connum, jobs, results, sortie)
+		go handleConnection(conn, connum, jobs, results)
 		connum += 1
 
 	}
 }
 
-func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, results chan int, sortie map[int]string) {
+func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, results chan ResWorker) {
 	//PFR !!!
 	defer connection.Close()
 	connReader := bufio.NewReader(connection)
@@ -295,28 +300,18 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 		jobs <- listGraphSommet[j]
 	}
 
-	//compteur := 0
-	/*
-		//permet de synchroniser les go routines
-		//tant que le compteur est plus petit que le nb de sommets
-		for compteur < nbSommets {
-			//on lit le message dans le channel results
-			t := <-results
-			fmt.Println("cc")
-			//si ce n'est pas son graphe, la connexion remet le message dans le channel
-			if <-results != connum {
-				results <- t
-				fmt.Println("1er if")
-				//si c'est son graph, la connexion enleve le message du channel et ajoute 1 au compteur
-			} else {
-				compteur += 1
-				fmt.Println("2e if")
-			}
-		}*/
+	compteur := 0
 
-	//Vide le channel résultats POUR  CLIENT
-	for a := 0; a < nbSommets; a++ {
-		<-results
+	//permet de synchroniser les go routines
+	//Principe : On attend que toutes les goroutines qui travaillent sur notre graph finissent leur travail et, pour chauqe résultat transmis, on garde le résultat en mémoire pour le client
+	for compteur != nbSommets {
+		t := <-results
+		if t.id == connum {
+			sortie[connum] += t.res
+			compteur += 1
+		} else {
+			results <- t
+		}
 	}
 
 	//fmt.Println(sortie)
