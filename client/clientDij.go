@@ -68,7 +68,7 @@ func main() {
 		fmt.Printf("#DEBUG MAIN connected\n")
 
 		//Client lit le graphe texte et l'envoi en format string ligne par ligne
-		f, err := os.Open("graph.txt")
+		f, err := os.Open("graph100.txt")
 		defer f.Close()
 		if err != nil {
 			log.Fatal(err)

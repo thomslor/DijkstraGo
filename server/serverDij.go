@@ -210,8 +210,8 @@ func main() {
 	//création des chan pour faire communiquer worker et main
 	//jobs : channel des datas
 	//results : channel de wait group (s'assurer que toutes les go routines ont fini)
-	jobs := make(chan GraphSommet, 100)
-	results := make(chan ResWorker, 100)
+	jobs := make(chan GraphSommet, 1000)
+	results := make(chan ResWorker, 1000)
 
 	//Initialisation des Workers
 	for i := 1; i <= 5; i++ {
