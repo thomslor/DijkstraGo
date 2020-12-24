@@ -90,7 +90,7 @@ func main() {
 		time.Sleep(1000 * time.Millisecond)
 
 		//Stockage des infos recues dans un fichier texte
-		file, err := os.OpenFile("Dijsktra.txt", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 1000)
+		file, err := os.OpenFile("Dijsktra.txt", os.O_CREATE|os.O_WRONLY, 0600)
 		defer file.Close() // on ferme automatiquement à la fin de notre programme
 
 		if err != nil {
