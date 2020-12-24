@@ -68,7 +68,7 @@ func main() {
 		fmt.Printf("#DEBUG MAIN connected\n")
 
 		//Client lit le graphe texte et l'envoi en format string ligne par ligne
-		f, err := os.Open("graph100.txt")
+		f, err := os.Open("graph.txt")
 		defer f.Close()
 		if err != nil {
 			log.Fatal(err)
@@ -91,6 +91,9 @@ func main() {
 
 		//Stockage des infos recues dans un fichier texte
 		file, err := os.OpenFile("Dijsktra.txt", os.O_CREATE|os.O_WRONLY, 0600)
+		//CREATE pour créer fichier s'il n'existe pas deja
+		//WR ONLY pour  rendre le fichier (dans le programme) accessible en écriture seulement
+		//0600 : permission -rw pour le fichier
 		defer file.Close() // on ferme automatiquement à la fin de notre programme
 
 		if err != nil {
