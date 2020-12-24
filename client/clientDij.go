@@ -90,17 +90,20 @@ func main() {
 		time.Sleep(1000 * time.Millisecond)
 
 		//Stockage des infos recues dans un fichier texte
-		file, err := os.OpenFile("Dijsktra.txt", os.O_CREATE|os.O_WRONLY, 0600)
+		file, err := os.OpenFile("Dijsktra.txt", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
 		//CREATE pour créer fichier s'il n'existe pas deja
 		//WR ONLY pour  rendre le fichier (dans le programme) accessible en écriture seulement
 		//0600 : permission -rw pour le fichier
 		defer file.Close() // on ferme automatiquement à la fin de notre programme
-
 		if err != nil {
 			panic(err)
 		}
 
-		_, err = file.WriteString(resultString) // écrire dans le fichier
+		_, err = file.WriteString("ID CLIENT : \n") // écrire l'id du client
+		if err != nil {
+			panic(err)
+		}
+		_, err = file.WriteString(resultString) // écrire le graphe trié
 		if err != nil {
 			panic(err)
 		}

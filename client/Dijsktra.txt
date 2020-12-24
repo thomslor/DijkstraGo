@@ -1,11 +1,12 @@
+ID CLIENT : 
 Djikstra pour le Sommet {E} 
+{B} --> {D}, 8 
 {E} --> {C}, 20 
 {C} --> {A}, 3 
 {C} --> {B}, 6 
-{B} --> {D}, 8 
-Djikstra pour le Sommet {A} 
-{A} --> {B}, 5 
-{A} --> {C}, 2 
+Djikstra pour le Sommet {C} 
+{C} --> {A}, 3 
+{C} --> {B}, 6 
 {B} --> {D}, 8 
 {D} --> {E}, 25 
 Djikstra pour le Sommet {B} 
@@ -18,8 +19,8 @@ Djikstra pour le Sommet {D}
 {D} --> {C}, 10 
 {D} --> {E}, 25 
 {B} --> {A}, 1 
-Djikstra pour le Sommet {C} 
+Djikstra pour le Sommet {A} 
+{A} --> {B}, 5 
+{A} --> {C}, 2 
 {B} --> {D}, 8 
 {D} --> {E}, 25 
-{C} --> {A}, 3 
-{C} --> {B}, 6 
