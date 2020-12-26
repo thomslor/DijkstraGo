@@ -93,10 +93,12 @@ func main() {
 		}
 		resultString = strings.TrimSuffix(resultString, "$")
 		// fmt.Printf("#DEBUG server replied :\n%s\n", resultString)
+		ID := resultString[0]
+		fmt.Println(resultString[0])
 		time.Sleep(1000 * time.Millisecond)
 
 		//Stockage des infos recues dans un fichier texte
-		file, err := os.OpenFile("Dijsktra.txt", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
+		file, err := os.OpenFile(fmt.Sprintf("Dijkstra%s.txt", ID), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
 		//CREATE pour créer fichier s'il n'existe pas deja
 		//WR ONLY pour  rendre le fichier (dans le programme) accessible en écriture seulement
 		//0600 : permission -rw pour le fichier
