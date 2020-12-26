@@ -281,10 +281,8 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 		graph[res1] = append(graph[res1], lien)
 
 		c++
-		fmt.Println(c)
 
 	}
-	fmt.Println("flag")
 
 	//nombre de sommets du graphe :
 	nbSommets := len(ListeNd(graph))

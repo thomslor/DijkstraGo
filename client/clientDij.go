@@ -77,7 +77,7 @@ func main() {
 		scanner := bufio.NewScanner(f)
 		nbLigne := 0
 		for scanner.Scan() {
-			fmt.Println(scanner.Text())
+			//fmt.Println(scanner.Text())
 			envoi += fmt.Sprintf("%s\n", scanner.Text())
 			nbLigne++
 			//io.WriteString(conn, fmt.Sprintf("%s\n", scanner.Text()))
@@ -94,7 +94,7 @@ func main() {
 		resultString = strings.TrimSuffix(resultString, "$")
 		// fmt.Printf("#DEBUG server replied :\n%s\n", resultString)
 		ID := resultString[0]
-		fmt.Println(resultString[0])
+		//fmt.Println(resultString[0])
 		time.Sleep(1000 * time.Millisecond)
 
 		//Stockage des infos recues dans un fichier texte
