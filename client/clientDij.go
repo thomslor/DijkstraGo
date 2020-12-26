@@ -65,6 +65,7 @@ func main() {
 
 		defer conn.Close()
 		reader := bufio.NewReader(conn)
+		envoi := ""
 		fmt.Printf("#DEBUG MAIN connected\n")
 
 		//Client lit le graphe texte et l'envoi en format string ligne par ligne
@@ -74,10 +75,15 @@ func main() {
 			log.Fatal(err)
 		}
 		scanner := bufio.NewScanner(f)
+		nbLigne := 0
 		for scanner.Scan() {
 			fmt.Println(scanner.Text())
-			io.WriteString(conn, fmt.Sprintf("%s\n", scanner.Text()))
+			envoi += fmt.Sprintf("%s\n", scanner.Text())
+			nbLigne++
+			//io.WriteString(conn, fmt.Sprintf("%s\n", scanner.Text()))
 		}
+		io.WriteString(conn, fmt.Sprintf("%d\n", nbLigne))
+		io.WriteString(conn, envoi)
 
 		//Apres l'envoi, le client attend une reponse du serveur avec les chemins les plus courts
 		resultString, err := reader.ReadString('$')
@@ -86,7 +92,7 @@ func main() {
 			os.Exit(1)
 		}
 		resultString = strings.TrimSuffix(resultString, "$")
-		fmt.Printf("#DEBUG server replied :\n%s\n", resultString)
+		//fmt.Printf("#DEBUG server replied :\n%s\n", resultString)
 		time.Sleep(1000 * time.Millisecond)
 
 		//Stockage des infos recues dans un fichier texte

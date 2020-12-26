@@ -234,8 +234,17 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 	defer connection.Close()
 	connReader := bufio.NewReader(connection)
 	graph := make(map[Nd][]Lien)
+	nbLigneS, _ := connReader.ReadString('\n')
+	nbLigneS = strings.TrimSuffix(nbLigneS, "\n")
+	nbLigne, errC := strconv.Atoi(nbLigneS)
+	if errC != nil {
+		fmt.Println(errC)
+	}
+	c := 0
+	fmt.Println(nbLigne)
 
-	for {
+	for c < nbLigne {
+
 		//on lit la ligne recue du client
 		inputLine, err := connReader.ReadString('\n')
 
@@ -247,10 +256,11 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 
 		//print la ligne recue
 		inputLine = strings.TrimSuffix(inputLine, "\n")
-		if inputLine == "EOF" {
-			break
-		}
-
+		/*
+			if inputLine == "EOF" {
+				break
+			}
+		*/
 		fmt.Printf("#DEBUG %d RCV |%s|\n", connum, inputLine)
 
 		//convertir le res3 de string vers int
@@ -270,7 +280,11 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 
 		graph[res1] = append(graph[res1], lien)
 
+		c++
+		fmt.Println(c)
+
 	}
+	fmt.Println("flag")
 
 	//nombre de sommets du graphe :
 	nbSommets := len(ListeNd(graph))
@@ -303,6 +317,7 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 		if t.id == connum {
 			returnString += t.res
 			compteur += 1
+
 		} else {
 			results <- t
 		}
@@ -312,8 +327,7 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 	//fmt.Println(sortie[connum])
 
 	returnString += "$"
-	//fmt.Println(returnString)
-	n, err := io.WriteString(connection, fmt.Sprintf("%s\n", returnString))
-	fmt.Println(err, " : ", n)
+	fmt.Println(returnString)
+	io.WriteString(connection, fmt.Sprintf("%s\n", returnString))
 
 }
