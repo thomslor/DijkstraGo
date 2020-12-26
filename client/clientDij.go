@@ -92,6 +92,7 @@ func main() {
 			os.Exit(1)
 		}
 		resultString = strings.TrimSuffix(resultString, "$")
+		ID := strings.TrimSuffix(resultString, "\n")
 		//fmt.Printf("#DEBUG server replied :\n%s\n", resultString)
 		time.Sleep(1000 * time.Millisecond)
 
@@ -105,7 +106,7 @@ func main() {
 			panic(err)
 		}
 
-		_, err = file.WriteString("ID CLIENT : \n") // écrire l'id du client
+		_, err = file.WriteString(fmt.Sprintf("ID CLIENT : %s\n", ID)) // écrire l'id du client
 		if err != nil {
 			panic(err)
 		}

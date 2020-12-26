@@ -307,7 +307,7 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 		jobs <- listGraphSommet[j]
 	}
 
-	returnString := ""
+	returnString := fmt.Sprintf("%d\n", connum)
 	compteur := 0
 
 	//permet de synchroniser les go routines

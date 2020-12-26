@@ -342,3 +342,107 @@ Djikstra pour le Sommet {D}
 {B} --> {A}, 1 
 {D} --> {B}, 7 
 {D} --> {C}, 10 
+ID CLIENT : 1
+Djikstra pour le Sommet {C} 
+{C} --> {B}, 6 
+{B} --> {D}, 8 
+{D} --> {E}, 25 
+{C} --> {A}, 3 
+Djikstra pour le Sommet {B} 
+{B} --> {A}, 1 
+{B} --> {C}, 3 
+{B} --> {D}, 8 
+{D} --> {E}, 25 
+Djikstra pour le Sommet {D} 
+{D} --> {B}, 7 
+{D} --> {C}, 10 
+{D} --> {E}, 25 
+{B} --> {A}, 1 
+Djikstra pour le Sommet {E} 
+{B} --> {D}, 8 
+{E} --> {C}, 20 
+{C} --> {A}, 3 
+{C} --> {B}, 6 
+Djikstra pour le Sommet {A} 
+{A} --> {B}, 5 
+{A} --> {C}, 2 
+{B} --> {D}, 8 
+{D} --> {E}, 25 
+1
+Djikstra pour le Sommet {C} 
+{C} --> {B}, 6 
+{B} --> {D}, 8 
+{D} --> {E}, 25 
+{C} --> {A}, 3 
+Djikstra pour le Sommet {B} 
+{B} --> {A}, 1 
+{B} --> {C}, 3 
+{B} --> {D}, 8 
+{D} --> {E}, 25 
+Djikstra pour le Sommet {D} 
+{D} --> {B}, 7 
+{D} --> {C}, 10 
+{D} --> {E}, 25 
+{B} --> {A}, 1 
+Djikstra pour le Sommet {E} 
+{B} --> {D}, 8 
+{E} --> {C}, 20 
+{C} --> {A}, 3 
+{C} --> {B}, 6 
+Djikstra pour le Sommet {A} 
+{A} --> {B}, 5 
+{A} --> {C}, 2 
+{B} --> {D}, 8 
+{D} --> {E}, 25 
+ID CLIENT : 2
+Djikstra pour le Sommet {E} 
+{B} --> {D}, 8 
+{E} --> {C}, 20 
+{C} --> {A}, 3 
+{C} --> {B}, 6 
+Djikstra pour le Sommet {A} 
+{B} --> {D}, 8 
+{D} --> {E}, 25 
+{A} --> {B}, 5 
+{A} --> {C}, 2 
+Djikstra pour le Sommet {C} 
+{C} --> {A}, 3 
+{C} --> {B}, 6 
+{B} --> {D}, 8 
+{D} --> {E}, 25 
+Djikstra pour le Sommet {D} 
+{D} --> {E}, 25 
+{B} --> {A}, 1 
+{D} --> {B}, 7 
+{D} --> {C}, 10 
+Djikstra pour le Sommet {B} 
+{B} --> {A}, 1 
+{B} --> {C}, 3 
+{B} --> {D}, 8 
+{D} --> {E}, 25 
+2
+Djikstra pour le Sommet {E} 
+{B} --> {D}, 8 
+{E} --> {C}, 20 
+{C} --> {A}, 3 
+{C} --> {B}, 6 
+Djikstra pour le Sommet {A} 
+{B} --> {D}, 8 
+{D} --> {E}, 25 
+{A} --> {B}, 5 
+{A} --> {C}, 2 
+Djikstra pour le Sommet {C} 
+{C} --> {A}, 3 
+{C} --> {B}, 6 
+{B} --> {D}, 8 
+{D} --> {E}, 25 
+Djikstra pour le Sommet {D} 
+{D} --> {E}, 25 
+{B} --> {A}, 1 
+{D} --> {B}, 7 
+{D} --> {C}, 10 
+Djikstra pour le Sommet {B} 
+{B} --> {A}, 1 
+{B} --> {C}, 3 
+{B} --> {D}, 8 
+{D} --> {E}, 25 
