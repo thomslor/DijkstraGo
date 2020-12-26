@@ -92,8 +92,7 @@ func main() {
 			os.Exit(1)
 		}
 		resultString = strings.TrimSuffix(resultString, "$")
-		ID := strings.TrimSuffix(resultString, "\n")
-		//fmt.Printf("#DEBUG server replied :\n%s\n", resultString)
+		// fmt.Printf("#DEBUG server replied :\n%s\n", resultString)
 		time.Sleep(1000 * time.Millisecond)
 
 		//Stockage des infos recues dans un fichier texte
@@ -106,14 +105,11 @@ func main() {
 			panic(err)
 		}
 
-		_, err = file.WriteString(fmt.Sprintf("ID CLIENT : %s\n", ID)) // écrire l'id du client
+		_, err = file.WriteString(fmt.Sprintf("ID CLIENT : %s\n", resultString)) // écrire l'id du client + le graph
 		if err != nil {
 			panic(err)
 		}
-		_, err = file.WriteString(resultString) // écrire le graphe trié
-		if err != nil {
-			panic(err)
-		}
+
 	}
 
 }
