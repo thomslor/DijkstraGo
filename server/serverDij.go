@@ -167,13 +167,16 @@ func Dijkstra(initNd Nd, graph map[Nd][]Lien) (plusCourtChemin string) {
 	return plusCourtChemin
 }
 
+//Fonction qui permet d'afficher le graph dans le Terminal, très utile pour débug
+/*
 func getGraph(graph map[Nd][]Lien) {
 	for i := range graph {
 		fmt.Println(graph[i])
 	}
 }
+*/
 
-func worker(id int, work chan GraphSommet, results chan ResWorker) {
+func worker(work chan GraphSommet, results chan ResWorker) {
 	for f := range work {
 		if f.Job {
 			//sortie[f.idGraph] += Dijkstra(f.Sommet, f.graph)
@@ -208,7 +211,7 @@ func main() {
 
 	//Initialisation des Workers
 	for i := 1; i <= 5; i++ {
-		go worker(i, jobs, results)
+		go worker(jobs, results)
 	}
 
 	for {
