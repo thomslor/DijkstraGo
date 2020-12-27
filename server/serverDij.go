@@ -152,7 +152,6 @@ func Dijkstra(initNd Nd, graph map[Nd][]Lien) (plusCourtChemin string) {
 				ResTab[lien.fin] = lien
 
 			}
-			//Rajouter la condition "2 chemins égaux"
 		}
 
 	}
@@ -191,7 +190,7 @@ func main() {
 	fmt.Printf("#DEBUG MAIN Creating TCP Server on port %d\n", port)
 	//Create a port string that lets us accept connection on all interfaces of the host
 	portString := fmt.Sprintf(":%s", strconv.Itoa(port))
-	fmt.Printf("#DEBUG MAIN PORT STRING |%s|\n", portString)
+	fmt.Printf("Connexion sur le port |%s|\n", portString)
 
 	ln, err := net.Listen("tcp", portString)
 	if err != nil {
@@ -233,7 +232,6 @@ func main() {
 }
 
 func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, results chan ResWorker) {
-	//PFR !!!
 	defer connection.Close()
 	connReader := bufio.NewReader(connection)
 	graph := make(map[Nd][]Lien)
@@ -264,7 +262,7 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 				break
 			}
 		*/
-		fmt.Printf("#DEBUG %d RCV |%s|\n", connum, inputLine)
+		fmt.Printf("Client %d Réception |%s|\n", connum, inputLine)
 
 		//convertir le res3 de string vers int
 		//Stocke la ligne recue

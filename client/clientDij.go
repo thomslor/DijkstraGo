@@ -38,7 +38,7 @@ func main() {
 	fmt.Printf("#DEBUG DIALING TCP Server on port %d\n", port)
 	//Create the target port string
 	portString := fmt.Sprintf("127.0.0.1:%s", strconv.Itoa(port))
-	fmt.Printf("#DEBUG MAIN PORT STRING |%s|\n", portString)
+	fmt.Printf("Connexion sur le port |%s|\n", portString)
 	//Connect
 	conn, err := net.Dial("tcp", portString)
 	if err != nil {
@@ -50,7 +50,7 @@ func main() {
 		defer conn.Close()
 		reader := bufio.NewReader(conn)
 		envoi := ""
-		fmt.Printf("#DEBUG MAIN connected\n")
+		fmt.Printf("Connexion réussi\n")
 
 		//Client lit le graphe texte et l'envoi en format string ligne par ligne
 		f, err := os.Open("graph100.txt")
@@ -72,7 +72,7 @@ func main() {
 		//Apres l'envoi, le client attend une reponse du serveur avec les chemins les plus courts
 		resultString, err := reader.ReadString('$')
 		if err != nil {
-			fmt.Printf("DEBUG MAIN could not read from server")
+			fmt.Printf("Lecture impossible de la réponse du serveur")
 			os.Exit(1)
 		}
 		resultString = strings.TrimSuffix(resultString, "$")
@@ -95,6 +95,8 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+
+		fmt.Printf("Résultat disponible dans le fichier : Dijkstra%s.txt", ID)
 
 	}
 
