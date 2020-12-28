@@ -41,7 +41,7 @@ func getArgs() int {
 		fmt.Printf("Usage: go run server.go <portnumber>\n")
 		os.Exit(1)
 	} else {
-		//on verifie que l'argument est bien un int
+		//on verifie que le 1er argument est bien un int et on le retourne
 		fmt.Printf("#DEBUG ARGS Port Number : %s\n", os.Args[1])
 		portNumber, err := strconv.Atoi(os.Args[1])
 		if err != nil {

@@ -12,29 +12,41 @@ import (
 	"time"
 )
 
-func getArgs() int {
-	//Make sure we have an argument
-	if len(os.Args) != 2 {
-		fmt.Printf("Usage: go run client.go <portnumber>\n")
+func getArgs() []string {
+	//on créé notre tableau de sortie
+	var res []string
+	//On verifie qu'on a bien 2 arguments
+	if len(os.Args) != 3 {
+		fmt.Printf("Usage: go run client.go <portnumber> <yourgraph.txt>\n")
 		os.Exit(1)
 	} else {
-		//Make sure the argument is a valid integer, return it
+
+		//on verifie que le 1er argument est bien un int
 		fmt.Printf("#DEBUG ARGS Port Number : %s\n", os.Args[1])
-		portNumber, err := strconv.Atoi(os.Args[1])
+		_, err := strconv.Atoi(os.Args[1])
 		if err != nil {
-			fmt.Printf("Usage: go run client.go <portnumber>\n")
+			fmt.Printf("Usage: go run client.go <portnumber> <yourgraph.txt>\n")
 			os.Exit(1)
 		} else {
-			return portNumber
+			//ajout du port au tableau de sortie
+			res = append(res, os.Args[1])
 		}
+		//on vérifie si le 2e argument est un fichier du dossier courant
+		fmt.Printf("#DEBUG ARGS Graph : %s\n", os.Args[2])
+		//a coder
+
+		//ajout du graph au tableau de sortie
+		res = append(res, os.Args[2])
 	}
-	//Should never be reached
-	return -1
+	return res
 }
 
 func main() {
-	//Get the port number
-	port := getArgs()
+	//Get the port number & graph
+	res := getArgs()
+	port, _ := strconv.Atoi(res[0])
+	graphName := res[1]
+	//fmt.Println(port, graphName)
 	fmt.Printf("#DEBUG DIALING TCP Server on port %d\n", port)
 	//Create the target port string
 	portString := fmt.Sprintf("127.0.0.1:%s", strconv.Itoa(port))
@@ -50,10 +62,10 @@ func main() {
 		defer conn.Close()
 		reader := bufio.NewReader(conn)
 		envoi := ""
-		fmt.Printf("Connexion réussi\n")
+		fmt.Printf("Connexion réussie\n")
 
 		//Client lit le graphe texte et l'envoi en format string ligne par ligne
-		f, err := os.Open("graph100.txt")
+		f, err := os.Open(graphName)
 		defer f.Close()
 		if err != nil {
 			log.Fatal(err)
@@ -96,7 +108,7 @@ func main() {
 			panic(err)
 		}
 
-		fmt.Printf("Résultat disponible dans le fichier : Dijkstra%s.txt", ID)
+		fmt.Printf("Résultat disponible dans le fichier : Dijkstra%s.txt ", ID)
 
 	}
 
