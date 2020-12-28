@@ -15,13 +15,13 @@ import (
 func getArgs() []string {
 	//on créé notre tableau de sortie
 	var res []string
-	//On verifie qu'on a bien 2 arguments
+	//On vérifie qu'on ait bien 2 arguments
 	if len(os.Args) != 3 {
 		fmt.Printf("Usage: go run client.go <portnumber> <yourgraph.txt>\n")
 		os.Exit(1)
 	} else {
 
-		//on verifie que le 1er argument est bien un int
+		//on vérifie que le 1er argument soit bien un int
 		fmt.Printf("#DEBUG ARGS Port Number : %s\n", os.Args[1])
 		_, err := strconv.Atoi(os.Args[1])
 		if err != nil {
@@ -31,7 +31,7 @@ func getArgs() []string {
 			//ajout du port au tableau de sortie
 			res = append(res, os.Args[1])
 		}
-		//on vérifie si le 2e argument est un fichier du dossier courant
+		//on vérifie que le 2e argument soit un fichier du dossier courant
 		fmt.Printf("#DEBUG ARGS Graph : %s\n", os.Args[2])
 		//a coder
 
@@ -42,73 +42,82 @@ func getArgs() []string {
 }
 
 func main() {
-	//Get the port number & graph
+	//Récupération du numéro de port et du nom du graphe
 	res := getArgs()
 	port, _ := strconv.Atoi(res[0])
 	graphName := res[1]
-	//fmt.Println(port, graphName)
 	fmt.Printf("#DEBUG DIALING TCP Server on port %d\n", port)
-	//Create the target port string
+
+	//Création du string du port cible
 	portString := fmt.Sprintf("127.0.0.1:%s", strconv.Itoa(port))
 	fmt.Printf("Connexion sur le port |%s|\n", portString)
-	//Connect
+
+	//Connection
 	conn, err := net.Dial("tcp", portString)
 	if err != nil {
-		//Leave if connection does not work
+		//Quitter la connexion si elle ne fonctionne pas
 		fmt.Printf("#DEBUG MAIN could not connect\n")
 		os.Exit(1)
 	} else {
-
+		//Fermeture automatique à la fin de l'exécution
 		defer conn.Close()
+
+		//Création d'un reader
 		reader := bufio.NewReader(conn)
 		envoi := ""
 		fmt.Printf("Connexion réussie\n")
 
-		//Client lit le graphe texte et l'envoi en format string ligne par ligne
+		//Le client lit le graphe texte et l'envoie en format string ligne par ligne
 		f, err := os.Open(graphName)
 		defer f.Close()
 		if err != nil {
 			log.Fatal(err)
 		}
+		//Création d'un scanner
 		scanner := bufio.NewScanner(f)
 		nbLigne := 0
 		for scanner.Scan() {
-			//fmt.Println(scanner.Text())
 			envoi += fmt.Sprintf("%s\n", scanner.Text())
 			nbLigne++
-			//io.WriteString(conn, fmt.Sprintf("%s\n", scanner.Text()))
 		}
+		//Envoi des données au serveur
 		io.WriteString(conn, fmt.Sprintf("%d\n", nbLigne))
 		io.WriteString(conn, envoi)
 
-		//Apres l'envoi, le client attend une reponse du serveur avec les chemins les plus courts
+		//Après l'envoi, le client attend une réponse du serveur avec les chemins les plus courts
+		//Lecture jusqu'au symbole de fin ($) et stockage de l'information dans resultString
 		resultString, err := reader.ReadString('$')
 		if err != nil {
 			fmt.Printf("Lecture impossible de la réponse du serveur")
 			os.Exit(1)
 		}
+		//On enlève le symbole de fin du resultString
 		resultString = strings.TrimSuffix(resultString, "$")
-		// fmt.Printf("#DEBUG server replied :\n%s\n", resultString)
+
+		//Stockage de l'ID du client dans la variable ID
 		ID := resultString[0]
-		//fmt.Println(resultString[0])
 		time.Sleep(1000 * time.Millisecond)
 
-		//Stockage des infos recues dans un fichier texte
+		//Stockage des informations reçues dans un fichier texte
 		file, err := os.OpenFile(fmt.Sprintf("Dijkstra%s.txt", ID), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
-		//CREATE pour créer fichier s'il n'existe pas deja
-		//WR ONLY pour  rendre le fichier (dans le programme) accessible en écriture seulement
+		//CREATE pour créer fichier s'il n'existe pas déjà
+		//WR ONLY pour rendre le fichier (dans le programme) accessible en écriture seulement
+		//APPEND pour rajouter les informations dans le fichier
 		//0600 : permission -rw pour le fichier
-		defer file.Close() // on ferme automatiquement à la fin de notre programme
+
+		//Fermeture automatique à la fin de l'exécution
+		defer file.Close()
 		if err != nil {
 			panic(err)
 		}
 
-		_, err = file.WriteString(fmt.Sprintf("ID CLIENT : %s\n", resultString)) // écrire l'id du client + le graph
+		//Ecriture de l'id du client et du graphe dans le fichier texte
+		_, err = file.WriteString(fmt.Sprintf("ID CLIENT : %s\n", resultString))
 		if err != nil {
 			panic(err)
 		}
 
-		fmt.Printf("Résultat disponible dans le fichier : Dijkstra%s.txt ", ID)
+		fmt.Printf("Résultat disponible dans le fichier : Dijkstra%s.txt\n", ID)
 
 	}
 

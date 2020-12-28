@@ -33,15 +33,16 @@ type ResWorker struct {
 	id  int
 }
 
+//Création de la constante infinie
 const Infinity = int(^uint(0) >> 1)
 
 func getArgs() int {
-	//On verifie qu'on a bien 2 arguments
+	//On vérifie qu'on ait bien 2 arguments
 	if len(os.Args) != 2 {
 		fmt.Printf("Usage: go run server.go <portnumber>\n")
 		os.Exit(1)
 	} else {
-		//on verifie que le 1er argument est bien un int et on le retourne
+		//on vérifie que le 1er argument soit bien un int et on le retourne
 		fmt.Printf("#DEBUG ARGS Port Number : %s\n", os.Args[1])
 		portNumber, err := strconv.Atoi(os.Args[1])
 		if err != nil {
@@ -56,7 +57,7 @@ func getArgs() int {
 	return -1
 }
 
-//fonction qui nous donne la liste des noeuds du graphe en entrée
+//Fonction qui donne la liste des noeuds du graphe en entrée
 func ListeNd(graph map[Nd][]Lien) []Nd {
 	keys := make([]Nd, 0, len(graph))
 	for k := range graph {
@@ -65,7 +66,7 @@ func ListeNd(graph map[Nd][]Lien) []Nd {
 	return keys
 }
 
-//fonction qui créé le tableau initial de distances à partir du graphe en entrée
+//Fonction qui créé le tableau initial de distances à partir du graphe en entrée
 //le noeud source se voit attribuer la valeur 0 et tous les autres noeuds la valeur infinie
 func NewDistTab(NdInit Nd, graph map[Nd][]Lien) map[Nd]int {
 	DistTab := make(map[Nd]int)
@@ -80,14 +81,14 @@ func NewDistTab(NdInit Nd, graph map[Nd][]Lien) map[Nd]int {
 	return DistTab
 }
 
-//fonction qui donne le noeud non visité avec la plus petite distance
+//Fonction qui donne le noeud non visité avec la plus petite distance
 func getBestNonVisitedNode(distTab map[Nd]int, visited []Nd) Nd {
 	type DistTabATrier struct {
 		Node     Nd
 		Distance int
 	}
 	var triOK []DistTabATrier
-	//Pour voir si le noeud a deja ete visite
+	//Pour voir si le noeud a déjà été visité
 	for nd, distance := range distTab {
 		var visiteOK bool
 		for _, ndVisiteOK := range visited {
@@ -95,7 +96,7 @@ func getBestNonVisitedNode(distTab map[Nd]int, visited []Nd) Nd {
 				visiteOK = true
 			}
 		}
-		//Si le noeud n'a pas ete visite, on l'ajoute au slice triOK
+		//Si le noeud n'a pas été visité, on l'ajoute au slice triOK
 		if !visiteOK {
 			triOK = append(triOK, DistTabATrier{nd, distance})
 		}
@@ -108,61 +109,46 @@ func getBestNonVisitedNode(distTab map[Nd]int, visited []Nd) Nd {
 	return triOK[0].Node
 }
 
-/*
-//Recuperer distance entre 2 noeuds a partir graph
-func GetDistance(dep Nd, fin Nd, graph map[Nd][]Lien) (distance int) {
-	for i := range graph[dep] {
-		if graph[dep][i].dep == dep && graph[dep][i].fin == fin {
-			distance = graph[dep][i].poids
-		}
-	}
-	return distance
-}
-*/
 //ALGORITHME DE DIJKSTRA : la fonction renvoie le chemin le plus court du noeud source a tous les autres noeuds
 func Dijkstra(initNd Nd, graph map[Nd][]Lien) (plusCourtChemin string) {
 
-	//Creation du tableau de distances
+	//Création du tableau de distances
 	distTab := NewDistTab(initNd, graph)
-	//fmt.Println(distTab)
+
+	//Création du tableau de résultat
 	ResTab := make(map[Nd]Lien)
 
-	//Creation d'une liste vide des noeuds visites. Des qu'un noeud est visite, il est ajoute a la liste
+	//Création d'une liste vide des noeuds visités. Dès qu'un noeud est visité, il est ajouté à la liste
 	var visiteOK []Nd
 
-	//Creation d'une boucle pour visiter tous les noeuds
+	//Création d'une boucle pour visiter tous les noeuds
 	for len(visiteOK) != len(ListeNd(graph)) {
 
 		//On prend le noeud non visité le plus proche a partir de distTab
 		nd := getBestNonVisitedNode(distTab, visiteOK)
 
-		//On marque le noeud comme etant visite
+		//On marque le noeud comme etant visité
 		visiteOK = append(visiteOK, nd)
 
-		//On prend les voisins du noeud visite (liste de liens)
+		//On prend les voisins du noeud visité (liste de liens)
 		voisins := graph[nd]
 
-		//On calcule les nouvelles distances et met a jour le distTab
+		//On calcule les nouvelles distances et on met à jour le distTab
 		for _, lien := range voisins {
 			distanceVoisin := distTab[nd] + lien.poids
-			//si distanceVoisin plus petite que la distance dans le distTab pour ce voisin
+			//si distanceVoisin est plus petite que la distance dans le distTab pour ce voisin
 			if distanceVoisin < distTab[lien.fin] {
-				//On met a jour la distTab pour ce voisin
+				//On met à jour la distTab pour ce voisin
 				distTab[lien.fin] = distanceVoisin
 				ResTab[lien.fin] = lien
 
 			}
 		}
-
 	}
-	//for nd, distance := range distTab {
-	//plusCourtChemin += fmt.Sprintf("La distance de %s à %s est %d \n", initNd, nd.nom, distance)
-	//}
 	plusCourtChemin += fmt.Sprintf("Djikstra pour le Sommet %s \n", initNd)
 	for dest, lien := range ResTab {
 		plusCourtChemin += fmt.Sprintf("%s --> %s, %d \n", lien.dep, dest, lien.poids)
 	}
-	//fmt.Println(plusCourtChemin)
 	return plusCourtChemin
 }
 
@@ -178,31 +164,32 @@ func getGraph(graph map[Nd][]Lien) {
 func worker(work chan GraphSommet, results chan ResWorker) {
 	for f := range work {
 		if f.Job {
-			//sortie[f.idGraph] += Dijkstra(f.Sommet, f.graph)
-			//fmt.Println(sortie)
 			results <- ResWorker{Dijkstra(f.Sommet, f.graph), f.idGraph}
 		}
 	}
 }
 
 func main() {
+	//Récupération du port
 	port := getArgs()
 	fmt.Printf("#DEBUG MAIN Creating TCP Server on port %d\n", port)
-	//Create a port string that lets us accept connection on all interfaces of the host
+
+	//Création d'un string portString nous laissant accepter les connexions sur toutes les interfaces de l'hôte
 	portString := fmt.Sprintf(":%s", strconv.Itoa(port))
 	fmt.Printf("Connexion sur le port |%s|\n", portString)
 
+	//Création d'un listener
 	ln, err := net.Listen("tcp", portString)
 	if err != nil {
 		fmt.Printf("#DEBUG MAIN Could not create listener\n")
 		panic(err)
 	}
 
-	//If we're here, we did not panic and ln is a valid listener
+	//Si nous sommes arrivés ici, alors le listener est valide
 	//connum = id de connexion
 	connum := 1
 
-	//création des chan pour faire communiquer worker et main
+	//Création des channels pour faire communiquer worker et main
 	//jobs : channel des datas
 	//results : channel de wait group (s'assurer que toutes les go routines ont fini)
 	jobs := make(chan GraphSommet, 1000)
@@ -220,20 +207,23 @@ func main() {
 		if errconn != nil {
 			fmt.Printf("DEBUG MAIN Error when accepting next connection\n")
 			panic(errconn)
-
 		}
 
-		//If we're here, we did not panic and conn is a valid handler to the new connection
-
+		//Si nous sommes arrivés ici, alors conn est un handler valide pour la nouvelle connection
 		go handleConnection(conn, connum, jobs, results)
 		connum += 1
-
 	}
 }
 
+//Fonction qui va gérer la connexion et appeler les différentes fonctions de Dijkstra
 func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, results chan ResWorker) {
+	//Fermeture automatique de la connection en fin  d'exécution
 	defer connection.Close()
+
+	//Création d'un reader
 	connReader := bufio.NewReader(connection)
+
+	//Création de différentes variables
 	graph := make(map[Nd][]Lien)
 	nbLigneS, _ := connReader.ReadString('\n')
 	nbLigneS = strings.TrimSuffix(nbLigneS, "\n")
@@ -246,62 +236,62 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 
 	for c < nbLigne {
 
-		//on lit la ligne recue du client
+		//Lecture de la ligne recue du client
 		inputLine, err := connReader.ReadString('\n')
-
 		if err != nil {
 			fmt.Printf("#DEBUG %d RCV ERROR no panic, just a client\n", connum)
 			fmt.Printf("#DEBUG Error :|%s|\n", err.Error())
 			break
 		}
 
-		//print la ligne recue
+		//On print la ligne reçue
 		inputLine = strings.TrimSuffix(inputLine, "\n")
-		/*
-			if inputLine == "EOF" {
-				break
-			}
-		*/
 		fmt.Printf("Client %d Réception |%s|\n", connum, inputLine)
 
-		//convertir le res3 de string vers int
-		//Stocke la ligne recue
-		//Construit un graphe grace a la ligne recue
-
+		//Découpage de la ligne reçue en 3 parties
 		tsep := strings.Split(inputLine, ";")
+
+		//Noeud de départ
 		res1 := Nd{nom: tsep[0]}
+
+		//Noeud de fin
 		res2 := Nd{nom: tsep[1]}
+
+		//Distance
 		resq := strings.TrimSuffix(tsep[2], "\n")
+		//convertir le res3 de string vers int
 		res3, erreur := strconv.Atoi(resq)
 		if erreur != nil {
 			fmt.Println(erreur)
 		}
 
+		//Stockage de la ligne reçue
 		lien := Lien{res1, res2, res3}
 
+		//Construction d'un graphe grâce à la ligne reçue
 		graph[res1] = append(graph[res1], lien)
 
 		c++
 
 	}
 
-	//nombre de sommets du graphe :
+	//Nombre de sommets du graphe
 	nbSommets := len(ListeNd(graph))
 
-	//liste des sommets du graphe :
+	//Liste des sommets du graphe
 	listSommet := ListeNd(graph)
 
-	//liste des sommets avec l'id du graph (qui est l'id du client) et un boolean Job :
+	//Liste des sommets avec l'id du graph (qui est l'id du client) et un boolean Job
 	listGraphSommet := make([]GraphSommet, 0, nbSommets)
 
-	//pour chaque sommet du graphe, on definit un GraphSommet qui a un Job=true, l'id de connexion du client et la liste de sommets du graphe
-	//puis on remplit notre slice listGraphSommet
+	//Pour chaque sommet du graphe, on définit un GraphSommet qui a un Job=true, l'id de connexion du client et la liste de sommets du graphe
+	//Puis on remplit notre slice listGraphSommet
 	for sommet := range ListeNd(graph) {
 		f := GraphSommet{true, connum, graph, listSommet[sommet]}
 		listGraphSommet = append(listGraphSommet, f)
 	}
 
-	//permet d'envoyer les noeuds sur lesquels on va appliquer dijkstra via le channel jobs
+	//Permet d'envoyer les noeuds sur lesquels on va appliquer dijkstra via le channel jobs
 	for j := 0; j < nbSommets; j++ {
 		jobs <- listGraphSommet[j]
 	}
@@ -309,7 +299,7 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 	returnString := fmt.Sprintf("%d\n", connum)
 	compteur := 0
 
-	//permet de synchroniser les go routines
+	//Permet de synchroniser les go routines
 	//Principe : On attend que toutes les goroutines qui travaillent sur notre graph finissent leur travail et, pour chaque résultat transmis, on garde le résultat en mémoire pour le client
 	for compteur != nbSommets {
 		t := <-results
@@ -321,12 +311,13 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 			results <- t
 		}
 	}
-
-	//fmt.Println(sortie)
-	//fmt.Println(sortie[connum])
-
+	//Ajout d'un symbole de fin au graphe
 	returnString += "$"
+
+	//Affichage du graphe à envoyer sur le terminal
 	fmt.Println(returnString)
+
+	//Envoi du graphe au client
 	io.WriteString(connection, fmt.Sprintf("%s\n", returnString))
 
 }
