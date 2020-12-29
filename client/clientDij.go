@@ -99,7 +99,7 @@ func main() {
 		time.Sleep(1000 * time.Millisecond)
 
 		//Stockage des informations reçues dans un fichier texte
-		file, err := os.OpenFile(fmt.Sprintf("Dijkstra%s.txt", ID), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
+		file, err := os.OpenFile(fmt.Sprintf("Dijkstra%d.txt", ID), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
 		//CREATE pour créer fichier s'il n'existe pas déjà
 		//WR ONLY pour rendre le fichier (dans le programme) accessible en écriture seulement
 		//APPEND pour rajouter les informations dans le fichier
@@ -117,7 +117,7 @@ func main() {
 			panic(err)
 		}
 
-		fmt.Printf("Résultat disponible dans le fichier : Dijkstra%s.txt\n", ID)
+		fmt.Printf("Résultat disponible dans le fichier : Dijkstra%d.txt\n", ID)
 
 	}
 
