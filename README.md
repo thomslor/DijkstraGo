@@ -34,4 +34,4 @@ Projet réalisé par Naël BOUNIA, Estelle MONIER et Thomas LORRAIN
 * Même procédure mais lancer les clients via le script bash script.bash situé dans le répertoire client
 
 ## Bonus
-Le code (Client et Serveur) est aussi disponible en format executable
+Le code (Client, Serveur, Générateur) est aussi disponible en format executable
