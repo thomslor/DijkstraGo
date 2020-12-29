@@ -232,7 +232,6 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 		fmt.Println(errC)
 	}
 	c := 0
-	fmt.Println(nbLigne)
 
 	for c < nbLigne {
 
