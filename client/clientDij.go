@@ -17,7 +17,7 @@ func getArgs() []string {
 	var res []string
 	//On vérifie qu'on ait bien 2 arguments
 	if len(os.Args) != 3 {
-		fmt.Printf("Usage: go run client.go <portnumber> <yourgraph.txt>\n")
+		fmt.Printf("Usage: go run clientDij.go <portnumber> <yourgraph.txt>\n")
 		os.Exit(1)
 	} else {
 
@@ -25,7 +25,7 @@ func getArgs() []string {
 		fmt.Printf("#DEBUG ARGS Port Number : %s\n", os.Args[1])
 		_, err := strconv.Atoi(os.Args[1])
 		if err != nil {
-			fmt.Printf("Usage: go run client.go <portnumber> <yourgraph.txt>\n")
+			fmt.Printf("Usage: go run clientDij.go <portnumber> <yourgraph.txt>\n")
 			os.Exit(1)
 		} else {
 			//ajout du port au tableau de sortie

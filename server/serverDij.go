@@ -39,14 +39,14 @@ const Infinity = int(^uint(0) >> 1)
 func getArgs() int {
 	//On vérifie qu'on ait bien 2 arguments
 	if len(os.Args) != 2 {
-		fmt.Printf("Usage: go run server.go <portnumber>\n")
+		fmt.Printf("Usage: go run serverDij.go <portnumber>\n")
 		os.Exit(1)
 	} else {
 		//on vérifie que le 1er argument soit bien un int et on le retourne
 		fmt.Printf("#DEBUG ARGS Port Number : %s\n", os.Args[1])
 		portNumber, err := strconv.Atoi(os.Args[1])
 		if err != nil {
-			fmt.Printf("Usage: go run server.go <portnumber>\n")
+			fmt.Printf("Usage: go run serverDij.go <portnumber>\n")
 			os.Exit(1)
 		} else {
 			return portNumber
