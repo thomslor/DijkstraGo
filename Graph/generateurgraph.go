@@ -1,4 +1,3 @@
-//GENERATION DE GRAPH PLUS PETIT GRACE A GROS GRAPH
 package main
 
 import (
