@@ -21,6 +21,7 @@ Projet réalisé par Naël BOUNIA, Estelle MONIER et Thomas LORRAIN
 
 ### GénérateurGraph
 * Permet de créer des sous-graphs au bon format à partir d'un graph de 5000 sommets avec le nombre de Sommets que l'on veut
+* Appel du générateur : go run generateurgraph.go <nbDeSommetsVoulu>
 
 ## Comment utiliser le code ?
 ### Avec un ou plusieurs clients lancés non-simultanément
