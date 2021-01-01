@@ -11,32 +11,42 @@ import (
 	"strings"
 )
 
-func GetArgs() int {
-	var output int
-	if len(os.Args) != 2 {
-		fmt.Printf("Usage: go run generateurgraph.go <nbDeSommetsDuGraph:int>\n")
+func GetArgs() [2]int {
+	var output [2]int
+	if len(os.Args) != 3 {
+		fmt.Printf("Usage: go run generateurgraph.go <nbDeSommetsDuGraph:int> <numeroDuFichierVoulu:int>\n")
 		os.Exit(1)
 	} else {
 		conv, err := strconv.Atoi(os.Args[1])
+		conv2, err1 := strconv.Atoi(os.Args[2])
 		if err != nil {
 			fmt.Printf("Le nombre de Sommets doit être un entier\n")
 			os.Exit(1)
 		} else {
-			output = conv
+			output[0] = conv
+		}
+		if err1 != nil {
+			fmt.Printf("Le numéro de fichier doit être un entier\n")
+			os.Exit(1)
+		} else {
+			output[1] = conv2
 		}
 	}
 	return output
 }
 
 func main() {
-	nbSommets := GetArgs()
+	tab := GetArgs()
+	nbSommets := tab[0]
+	numFichier := tab[1]
 	f, err := os.Open("graph5000.txt")
 	defer f.Close()
 	if err != nil {
 		log.Fatal(err)
 	}
+	nomFichier := fmt.Sprintf("graph%d_n°%d.txt", nbSommets, numFichier)
 
-	file, err1 := os.OpenFile(fmt.Sprintf("graph%d_n°%d.txt", nbSommets, rand.Intn(100)), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
+	file, err1 := os.OpenFile(nomFichier, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
 	defer file.Close()
 	if err1 != nil {
 		log.Fatal(err1)
@@ -68,4 +78,5 @@ func main() {
 		}
 
 	}
+	fmt.Printf("Graph disponible dans le répertoire Graph sous le nom : %s", nomFichier)
 }
