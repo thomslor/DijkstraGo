@@ -31,7 +31,7 @@ Projet réalisé par Naël BOUNIA, Estelle MONIER et Thomas LORRAIN
 * Récupérer le résultat dans le fichier situé dans le répertoire client dont le nom est affiché sur le terminal
 
 ### Clients en simultanée
-* Même procédure mais lancer les clients via le script bash script.bash situé dans le répertoire client
+* Même procédure mais lancer les clients via le script bash script.bash situé dans le répertoire client (ATTENTION, le script est écrit pour un serveur sur le port 4337 mais est bien sûr éditable pour mettre le port que vous souhaitez)
 
 ## Bonus
 Le code (Client, Serveur, Générateur) est aussi disponible en format executable
