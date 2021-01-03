@@ -196,7 +196,7 @@ func main() {
 	results := make(chan ResWorker, 1000)
 
 	//Initialisation des Workers
-	for i := 1; i <= 5; i++ {
+	for i := 1; i <= 20; i++ {
 		go worker(jobs, results)
 	}
 

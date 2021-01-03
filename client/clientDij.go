@@ -31,9 +31,7 @@ func getArgs() []string {
 			//ajout du port au tableau de sortie
 			res = append(res, os.Args[1])
 		}
-		//on vérifie que le 2e argument soit un fichier du dossier courant
 		fmt.Printf("#DEBUG ARGS Graph : %s\n", os.Args[2])
-		//a coder
 
 		//ajout du graph au tableau de sortie
 		res = append(res, os.Args[2])
@@ -66,6 +64,7 @@ func main() {
 		reader := bufio.NewReader(conn)
 		envoi := ""
 		fmt.Printf("Connexion réussie\n")
+		depart := time.Now()
 
 		//Le client lit le graphe texte et l'envoie en format string ligne par ligne
 		f, err := os.Open(graphName)
@@ -118,6 +117,9 @@ func main() {
 		}
 
 		fmt.Printf("Résultat disponible dans le fichier : Dijkstra%d.txt\n", ID)
+		arrivee := time.Now()
+		duree := arrivee.Sub(depart)
+		fmt.Printf("Ca a pris %v millisecond", duree.Milliseconds())
 
 	}
 
