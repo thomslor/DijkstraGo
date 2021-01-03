@@ -191,7 +191,7 @@ func main() {
 
 	//Création des channels pour faire communiquer worker et main
 	//jobs : channel des datas
-	//results : channel de wait group (s'assurer que toutes les go routines ont fini)
+	//results : channel de wait group (s'assurer que toutes les go routines ont fini) et transmission des résultats
 	jobs := make(chan GraphSommet, 1000)
 	results := make(chan ResWorker, 1000)
 
