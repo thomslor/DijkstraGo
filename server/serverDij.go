@@ -145,7 +145,7 @@ func Dijkstra(initNd Nd, graph map[Nd][]Lien) (plusCourtChemin string) {
 			}
 		}
 	}
-	plusCourtChemin += fmt.Sprintf("Djikstra pour le Sommet %s \n", initNd)
+	plusCourtChemin += fmt.Sprintf("Dijkstra pour le Sommet %s \n", initNd)
 	for dest, lien := range ResTab {
 		plusCourtChemin += fmt.Sprintf("%s --> %s, %d \n", lien.dep, dest, lien.poids)
 	}
