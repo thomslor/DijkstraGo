@@ -34,5 +34,4 @@ Projet réalisé par Naël BOUNIA, Estelle MONIER et Thomas LORRAIN
 ### Clients en simultanée
 * Même procédure mais lancer les clients via le script bash script.bash situé dans le répertoire client (ATTENTION, le script est écrit pour un serveur sur le port 4337 et avec 2 clients en simultanée avec les graphs graph.txt et graph100.txt)
 
-## Bonus
-Le code (Client, Serveur, Générateur) est aussi disponible en format executable
+

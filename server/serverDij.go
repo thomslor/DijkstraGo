@@ -299,7 +299,8 @@ func handleConnection(connection net.Conn, connum int, jobs chan GraphSommet, re
 	compteur := 0
 
 	//Permet de synchroniser les go routines
-	//Principe : On attend que toutes les goroutines qui travaillent sur notre graph finissent leur travail et, pour chaque résultat transmis, on garde le résultat en mémoire pour le client
+	//Principe : On attend que toutes les goroutines qui travaillent sur notre graph finissent leur travail et,
+	//pour chaque résultat transmis, on garde le résultat en mémoire pour le client
 	for compteur != nbSommets {
 		t := <-results
 		if t.id == connum {
